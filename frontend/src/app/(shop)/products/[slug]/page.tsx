@@ -1,0 +1,76 @@
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { ProductGallery } from '@/components/product/ProductGallery';
+import { ProductInfo } from '@/components/product/ProductInfo';
+import { SellerCard } from '@/components/product/SellerCard';
+import { RelatedProducts } from '@/components/product/RelatedProducts';
+import { api } from '@/lib/api';
+
+interface Props {
+  params: { slug: string };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  try {
+    const product = await api.products.getOne(params.slug);
+    return {
+      title: product.title,
+      description: product.description?.substring(0, 160),
+      openGraph: {
+        title: product.title,
+        description: product.description?.substring(0, 160),
+        images: product.images?.[0] ? [{ url: product.images[0].url }] : [],
+        type: 'website',
+      },
+      other: {
+        'product:price:amount': product.price,
+        'product:price:currency': product.currency,
+      },
+    };
+  } catch {
+    return { title: 'Product not found' };
+  }
+}
+
+export default async function ProductPage({ params }: Props) {
+  let product;
+  try {
+    product = await api.products.getOne(params.slug);
+  } catch {
+    notFound();
+  }
+
+  return (
+    <main className="container-app py-8">
+      {/* Breadcrumb */}
+      <nav className="text-sm text-slate-500 mb-6 flex items-center gap-2">
+        <a href="/" className="hover:text-primary-600">Home</a>
+        <span>/</span>
+        <a href="/products" className="hover:text-primary-600">Products</a>
+        <span>/</span>
+        <a href={`/products?category=${product.category?.slug}`} className="hover:text-primary-600">
+          {product.category?.name}
+        </a>
+        <span>/</span>
+        <span className="text-slate-900 dark:text-white truncate max-w-xs">{product.title}</span>
+      </nav>
+
+      <div className="grid lg:grid-cols-2 gap-10 mb-12">
+        {/* Gallery */}
+        <ProductGallery images={product.images} videos={product.videos} />
+
+        {/* Info + Actions */}
+        <div className="space-y-6">
+          <ProductInfo product={product} />
+          <SellerCard seller={product.seller} productId={product.id} />
+        </div>
+      </div>
+
+      {/* Related */}
+      <section>
+        <h2 className="text-xl font-bold mb-6">Similar Listings</h2>
+        <RelatedProducts productId={product.id} />
+      </section>
+    </main>
+  );
+}
