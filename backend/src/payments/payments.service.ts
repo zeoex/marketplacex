@@ -6,16 +6,17 @@ import { CreateCheckoutDto } from './dto';
 
 @Injectable()
 export class PaymentsService {
-  private stripe: Stripe;
+  private stripe: Stripe | null;
 
   constructor(private prisma: PrismaService, private config: ConfigService) {
-    this.stripe = new Stripe(config.get<string>('STRIPE_SECRET_KEY')!, {
-      apiVersion: '2023-10-16',
-    });
+    const key = config.get<string>('STRIPE_SECRET_KEY');
+    this.stripe = key ? new Stripe(key, { apiVersion: '2023-10-16' }) : null;
+    if (!key) console.warn('STRIPE_SECRET_KEY not set — Stripe payments disabled');
   }
 
   // ─── Stripe Checkout ──────────────────────────────────────
   async createStripeCheckout(userId: string, dto: CreateCheckoutDto) {
+    if (!this.stripe) throw new BadRequestException('Stripe payments not configured');
     const order = await this.createOrder(userId, dto);
 
     const session = await this.stripe.checkout.sessions.create({
@@ -69,6 +70,7 @@ export class PaymentsService {
 
   // ─── Stripe Webhook ───────────────────────────────────────
   async handleStripeWebhook(payload: Buffer, signature: string) {
+    if (!this.stripe) throw new BadRequestException('Stripe payments not configured');
     let event: Stripe.Event;
     try {
       event = this.stripe.webhooks.constructEvent(

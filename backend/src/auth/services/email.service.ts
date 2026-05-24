@@ -4,13 +4,16 @@ import { Resend } from 'resend';
 
 @Injectable()
 export class EmailService {
-  private resend: Resend;
+  private resend: Resend | null;
 
   constructor(private config: ConfigService) {
-    this.resend = new Resend(config.get<string>('RESEND_API_KEY'));
+    const apiKey = config.get<string>('RESEND_API_KEY');
+    this.resend = apiKey ? new Resend(apiKey) : null;
+    if (!apiKey) console.warn('RESEND_API_KEY not set — email sending disabled');
   }
 
   async sendVerificationEmail(to: string, code: string) {
+    if (!this.resend) return;
     await this.resend.emails.send({
       from: this.config.get('EMAIL_FROM') || 'MarketPlaceX <noreply@marketplacex.com>',
       to,
@@ -30,6 +33,7 @@ export class EmailService {
   }
 
   async sendPasswordReset(to: string, token: string, userId: string) {
+    if (!this.resend) return;
     const resetUrl = `${this.config.get('APP_URL')}/auth/reset-password?token=${token}&userId=${userId}`;
     await this.resend.emails.send({
       from: this.config.get('EMAIL_FROM') || 'MarketPlaceX <noreply@marketplacex.com>',
@@ -50,6 +54,7 @@ export class EmailService {
   }
 
   async sendOrderConfirmation(to: string, orderNumber: string, total: number) {
+    if (!this.resend) return;
     await this.resend.emails.send({
       from: this.config.get('EMAIL_FROM') || 'MarketPlaceX <noreply@marketplacex.com>',
       to,
