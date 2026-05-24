@@ -32,11 +32,11 @@ interface ProductCardProps {
 }
 
 const CONDITION_LABELS: Record<string, { label: string; color: string }> = {
-  NEW: { label: 'New', color: 'bg-green-100 text-green-700' },
-  LIKE_NEW: { label: 'Like New', color: 'bg-blue-100 text-blue-700' },
-  GOOD: { label: 'Good', color: 'bg-yellow-100 text-yellow-700' },
-  FAIR: { label: 'Fair', color: 'bg-orange-100 text-orange-700' },
-  POOR: { label: 'Poor', color: 'bg-red-100 text-red-700' },
+  NEW: { label: 'Nuevo', color: 'bg-green-100 text-green-700' },
+  LIKE_NEW: { label: 'Como Nuevo', color: 'bg-blue-100 text-blue-700' },
+  GOOD: { label: 'Buen Estado', color: 'bg-yellow-100 text-yellow-700' },
+  FAIR: { label: 'Estado Regular', color: 'bg-orange-100 text-orange-700' },
+  POOR: { label: 'Mal Estado', color: 'bg-red-100 text-red-700' },
 };
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
@@ -49,7 +49,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     onMutate: () => setIsFav(!isFav),
     onError: () => {
       setIsFav(!isFav);
-      toast.error('Failed to update favorite');
+      toast.error('Error al actualizar favoritos');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
@@ -59,7 +59,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!user) { toast.error('Please log in to save favorites'); return; }
+    if (!user) { toast.error('Iniciá sesión para guardar favoritos'); return; }
     toggleFavMutation.mutate();
   };
 
@@ -73,7 +73,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       transition={{ delay: index * 0.05, duration: 0.3 }}
     >
       <Link href={`/products/${product.slug}`} className="product-card group block">
-        {/* Image */}
+        {/* Imagen */}
         <div className="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-700">
           {imageUrl ? (
             <Image
@@ -89,18 +89,18 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </div>
           )}
 
-          {/* Condition badge */}
+          {/* Badge de condición */}
           <div className={`absolute top-2 left-2 badge text-xs ${condition.color}`}>
             {condition.label}
           </div>
 
-          {/* Favorite button */}
+          {/* Botón favorito */}
           <button
             onClick={handleFavorite}
             className="absolute top-2 right-2 w-8 h-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm
                        rounded-full flex items-center justify-center shadow-sm transition-all
                        hover:scale-110 active:scale-95"
-            aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+            aria-label={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
           >
             <Heart
               className={`w-4 h-4 transition-colors ${isFav ? 'fill-red-500 text-red-500' : 'text-slate-600'}`}
@@ -108,7 +108,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           </button>
         </div>
 
-        {/* Content */}
+        {/* Contenido */}
         <div className="p-3">
           <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary-600 transition-colors">
             {product.title}
@@ -133,7 +133,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             ) : null}
           </div>
 
-          {/* Seller */}
+          {/* Vendedor */}
           <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-50 dark:border-slate-700">
             <div className="w-5 h-5 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs overflow-hidden shrink-0">
               {product.seller.avatarUrl ? (

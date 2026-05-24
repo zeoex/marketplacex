@@ -9,20 +9,20 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, User, AtSign } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, AtSign, ShieldCheck } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import toast from 'react-hot-toast';
 
 const schema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  username: z.string().min(3, 'Username must be at least 3 characters').regex(/^[a-zA-Z0-9_]+$/, 'Only letters, numbers and underscores'),
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+  username: z.string().min(3, 'El usuario debe tener al menos 3 caracteres').regex(/^[a-zA-Z0-9_]+$/, 'Solo letras, números y guiones bajos'),
+  email: z.string().email('Email inválido'),
+  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
   confirmPassword: z.string(),
 }).refine((d) => d.password === d.confirmPassword, {
-  message: "Passwords don't match",
+  message: 'Las contraseñas no coinciden',
   path: ['confirmPassword'],
 });
 
@@ -41,11 +41,11 @@ export default function RegisterPage() {
     mutationFn: (data: Omit<FormData, 'confirmPassword'>) => api.auth.register(data),
     onSuccess: (res: any) => {
       setAuth(res.data.user, res.data.accessToken, res.data.refreshToken);
-      toast.success('Account created! Please verify your email.');
+      toast.success('¡Cuenta creada! Verificá tu email para completar el registro.');
       router.push('/');
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Registration failed');
+      toast.error(err.message || 'Error al crear la cuenta');
     },
   });
 
@@ -65,8 +65,16 @@ export default function RegisterPage() {
               </div>
               Market<span className="text-brand">PlaceX</span>
             </Link>
-            <h1 className="text-2xl font-bold">Create your account</h1>
-            <p className="text-slate-500 mt-1 text-sm">Join millions of buyers and sellers</p>
+            <h1 className="text-2xl font-bold">Creá tu cuenta</h1>
+            <p className="text-slate-500 mt-1 text-sm">Unite a miles de compradores y vendedores en Argentina</p>
+          </div>
+
+          {/* Aviso de verificación */}
+          <div className="flex items-start gap-3 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-xl p-3 mb-6">
+            <ShieldCheck className="w-5 h-5 text-primary-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-primary-700 dark:text-primary-300">
+              Para publicar artículos y contactar vendedores necesitás verificar tu identidad después del registro.
+            </p>
           </div>
 
           {/* OAuth */}
@@ -82,44 +90,44 @@ export default function RegisterPage() {
 
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
-            <span className="text-xs text-slate-400">or with email</span>
+            <span className="text-xs text-slate-400">o con email</span>
             <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1.5">Full name</label>
+                <label className="block text-sm font-medium mb-1.5">Nombre completo</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input {...register('name')} placeholder="John Doe" className="input-field pl-10" />
+                  <input {...register('name')} placeholder="Juan Pérez" className="input-field pl-10" />
                 </div>
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1.5">Username</label>
+                <label className="block text-sm font-medium mb-1.5">Usuario</label>
                 <div className="relative">
                   <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input {...register('username')} placeholder="john_doe" className="input-field pl-10" />
+                  <input {...register('username')} placeholder="juan_perez" className="input-field pl-10" />
                 </div>
                 {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1.5">Email</label>
+              <label className="block text-sm font-medium mb-1.5">Correo electrónico</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input {...register('email')} type="email" placeholder="you@example.com" className="input-field pl-10" />
+                <input {...register('email')} type="email" placeholder="vos@ejemplo.com" className="input-field pl-10" />
               </div>
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1.5">Password</label>
+              <label className="block text-sm font-medium mb-1.5">Contraseña</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input {...register('password')} type={showPw ? 'text' : 'password'} placeholder="Min 8 characters" className="input-field pl-10 pr-10" />
+                <input {...register('password')} type={showPw ? 'text' : 'password'} placeholder="Mínimo 8 caracteres" className="input-field pl-10 pr-10" />
                 <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -128,10 +136,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1.5">Confirm password</label>
+              <label className="block text-sm font-medium mb-1.5">Confirmar contraseña</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input {...register('confirmPassword')} type={showPw ? 'text' : 'password'} placeholder="Repeat password" className="input-field pl-10" />
+                <input {...register('confirmPassword')} type={showPw ? 'text' : 'password'} placeholder="Repetí la contraseña" className="input-field pl-10" />
               </div>
               {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
             </div>
@@ -140,22 +148,22 @@ export default function RegisterPage() {
               {registerMutation.isPending ? (
                 <span className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Creating account...
+                  Creando cuenta...
                 </span>
-              ) : 'Create account'}
+              ) : 'Crear cuenta'}
             </button>
 
             <p className="text-xs text-slate-400 text-center">
-              By signing up, you agree to our{' '}
-              <Link href="/terms" className="text-primary-600 hover:underline">Terms</Link>
-              {' '}and{' '}
-              <Link href="/privacy" className="text-primary-600 hover:underline">Privacy Policy</Link>
+              Al registrarte aceptás nuestros{' '}
+              <Link href="/terms" className="text-primary-600 hover:underline">Términos de Uso</Link>
+              {' '}y la{' '}
+              <Link href="/privacy" className="text-primary-600 hover:underline">Política de Privacidad</Link>
             </p>
           </form>
 
           <p className="text-center text-sm text-slate-500 mt-6">
-            Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary-600 font-semibold hover:underline">Sign in</Link>
+            ¿Ya tenés cuenta?{' '}
+            <Link href="/auth/login" className="text-primary-600 font-semibold hover:underline">Iniciá sesión</Link>
           </p>
         </div>
       </motion.div>

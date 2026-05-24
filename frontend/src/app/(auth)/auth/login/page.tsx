@@ -9,15 +9,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, Chrome } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import toast from 'react-hot-toast';
 
 const schema = z.object({
-  emailOrUsername: z.string().min(1, 'Email or username required'),
-  password: z.string().min(1, 'Password required'),
+  emailOrUsername: z.string().min(1, 'Ingresá tu email o usuario'),
+  password: z.string().min(1, 'Ingresá tu contraseña'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -35,11 +35,11 @@ export default function LoginPage() {
     mutationFn: (data: FormData) => api.auth.login(data),
     onSuccess: (res: any) => {
       setAuth(res.data.user, res.data.accessToken, res.data.refreshToken);
-      toast.success(`Welcome back, ${res.data.user.name}!`);
+      toast.success(`¡Bienvenido/a, ${res.data.user.name}!`);
       router.push('/');
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Invalid credentials');
+      toast.error(err.message || 'Credenciales incorrectas');
     },
   });
 
@@ -50,9 +50,8 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        {/* Card */}
         <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-8">
-          {/* Header */}
+          {/* Encabezado */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 font-bold text-xl mb-4">
               <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center">
@@ -60,11 +59,11 @@ export default function LoginPage() {
               </div>
               Market<span className="text-brand">PlaceX</span>
             </Link>
-            <h1 className="text-2xl font-bold">Welcome back</h1>
-            <p className="text-slate-500 mt-1 text-sm">Sign in to your account</p>
+            <h1 className="text-2xl font-bold">Bienvenido/a de nuevo</h1>
+            <p className="text-slate-500 mt-1 text-sm">Iniciá sesión en tu cuenta</p>
           </div>
 
-          {/* OAuth buttons */}
+          {/* Botones OAuth */}
           <div className="grid grid-cols-3 gap-3 mb-6">
             {[
               { label: 'Google', icon: '🇬', href: `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/google` },
@@ -85,20 +84,20 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
-            <span className="text-xs text-slate-400">or continue with email</span>
+            <span className="text-xs text-slate-400">o con email</span>
             <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
           </div>
 
-          {/* Form */}
+          {/* Formulario */}
           <form onSubmit={handleSubmit((d) => loginMutation.mutate(d))} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">Email or username</label>
+              <label className="block text-sm font-medium mb-1.5">Email o usuario</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   {...register('emailOrUsername')}
                   type="text"
-                  placeholder="your@email.com"
+                  placeholder="vos@ejemplo.com"
                   className="input-field pl-10"
                 />
               </div>
@@ -109,9 +108,9 @@ export default function LoginPage() {
 
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className="text-sm font-medium">Password</label>
+                <label className="text-sm font-medium">Contraseña</label>
                 <Link href="/auth/forgot-password" className="text-xs text-primary-600 hover:underline">
-                  Forgot password?
+                  ¿Olvidaste la contraseña?
                 </Link>
               </div>
               <div className="relative">
@@ -126,7 +125,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPw(!showPw)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  aria-label={showPw ? 'Hide password' : 'Show password'}
+                  aria-label={showPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -144,16 +143,16 @@ export default function LoginPage() {
               {loginMutation.isPending ? (
                 <span className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Signing in...
+                  Iniciando sesión...
                 </span>
-              ) : 'Sign in'}
+              ) : 'Iniciar sesión'}
             </button>
           </form>
 
           <p className="text-center text-sm text-slate-500 mt-6">
-            Don't have an account?{' '}
+            ¿No tenés cuenta?{' '}
             <Link href="/auth/register" className="text-primary-600 font-semibold hover:underline">
-              Sign up free
+              Registrate gratis
             </Link>
           </p>
         </div>

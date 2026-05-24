@@ -3,22 +3,22 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'luci
 
 const LINKS = {
   company: [
-    { label: 'About Us', href: '/about' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'Press', href: '/press' },
+    { label: 'Sobre Nosotros', href: '/about' },
+    { label: 'Empleos', href: '/careers' },
+    { label: 'Prensa', href: '/press' },
     { label: 'Blog', href: '/blog' },
   ],
   support: [
-    { label: 'Help Center', href: '/help' },
-    { label: 'Safety Tips', href: '/safety' },
-    { label: 'Contact Us', href: '/contact' },
-    { label: 'Report a Problem', href: '/report' },
+    { label: 'Centro de Ayuda', href: '/help' },
+    { label: 'Consejos de Seguridad', href: '/safety' },
+    { label: 'Contactanos', href: '/contact' },
+    { label: 'Reportar un Problema', href: '/report' },
   ],
   legal: [
-    { label: 'Terms of Service', href: '/terms' },
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Cookie Policy', href: '/cookies' },
-    { label: 'Community Guidelines', href: '/guidelines' },
+    { label: 'Términos de Uso', href: '/terms' },
+    { label: 'Política de Privacidad', href: '/privacy' },
+    { label: 'Política de Cookies', href: '/cookies' },
+    { label: 'Normas de la Comunidad', href: '/guidelines' },
   ],
 };
 
@@ -34,21 +34,21 @@ export function Footer() {
     <footer className="bg-slate-900 text-slate-300">
       <div className="container-app py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand */}
+          {/* Marca */}
           <div className="lg:col-span-2">
             <Link href="/" className="text-white font-bold text-xl">
               MarketPlaceX
             </Link>
             <p className="mt-3 text-sm text-slate-400 max-w-xs">
-              The fastest way to buy and sell locally. List your items in minutes and reach thousands of buyers.
+              La forma más rápida de comprar y vender en Argentina. Publicá gratis y contactate directamente con los vendedores.
             </p>
             <div className="flex items-center gap-1 mt-3 text-xs text-slate-500">
               <MapPin className="w-3 h-3" />
-              <span>Available worldwide</span>
+              <span>Argentina</span>
             </div>
             <div className="flex items-center gap-1 mt-1 text-xs text-slate-500">
               <Mail className="w-3 h-3" />
-              <span>support@marketplacex.com</span>
+              <span>soporte@marketplacex.com</span>
             </div>
             <div className="flex items-center gap-3 mt-4">
               {SOCIAL.map(({ icon: Icon, href, label }) => (
@@ -64,9 +64,9 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Company */}
+          {/* Empresa */}
           <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Company</h3>
+            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Empresa</h3>
             <ul className="space-y-2">
               {LINKS.company.map(({ label, href }) => (
                 <li key={label}>
@@ -78,9 +78,9 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
+          {/* Soporte */}
           <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Support</h3>
+            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Soporte</h3>
             <ul className="space-y-2">
               {LINKS.support.map(({ label, href }) => (
                 <li key={label}>
@@ -110,10 +110,10 @@ export function Footer() {
 
       <div className="border-t border-slate-800">
         <div className="container-app py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} MarketPlaceX. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} MarketPlaceX. Todos los derechos reservados.</p>
           <div className="flex items-center gap-1">
             <Phone className="w-3 h-3" />
-            <span>24/7 Customer Support</span>
+            <span>Soporte 24/7</span>
           </div>
         </div>
       </div>

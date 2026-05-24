@@ -17,7 +17,7 @@ export default function HomePage() {
 
       {/* Categories */}
       <section className="container-app py-12">
-        <h2 className="text-2xl font-bold mb-6">Browse by Category</h2>
+        <h2 className="text-2xl font-bold mb-6">Explorá por Categoría</h2>
         <CategoriesGrid />
       </section>
 
@@ -25,9 +25,9 @@ export default function HomePage() {
       <section className="bg-slate-50 dark:bg-slate-900 py-12">
         <div className="container-app">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Featured Listings</h2>
+            <h2 className="text-2xl font-bold">Publicaciones Destacadas</h2>
             <a href="/products?featured=true" className="text-primary-600 hover:underline text-sm font-medium">
-              View all →
+              Ver todas →
             </a>
           </div>
           <Suspense fallback={
@@ -43,9 +43,9 @@ export default function HomePage() {
       {/* Recent Products */}
       <section className="container-app py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Recent Listings</h2>
+          <h2 className="text-2xl font-bold">Publicaciones Recientes</h2>
           <a href="/products" className="text-primary-600 hover:underline text-sm font-medium">
-            View all →
+            Ver todas →
           </a>
         </div>
         <Suspense fallback={

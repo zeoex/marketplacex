@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { ShoppingCart, MessageCircle, Share2, Flag, Tag, Package, Truck, MapPin } from 'lucide-react';
+import { MessageCircle, Share2, Flag, Package, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth';
-import { useCartStore } from '@/store/cart';
+import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 interface Product {
@@ -14,38 +13,33 @@ interface Product {
   price: number;
   currency: string;
   condition: string;
-  delivery?: string;
   location?: string;
   stock: number;
   status: string;
   tags?: { name: string }[];
-  variants?: { id: string; name: string; value: string; price?: number; stock?: number }[];
 }
 
 const CONDITION_MAP: Record<string, string> = {
-  NEW: 'New',
-  LIKE_NEW: 'Like New',
-  GOOD: 'Good',
-  FAIR: 'Fair',
-  POOR: 'Poor',
-};
-
-const DELIVERY_MAP: Record<string, string> = {
-  SHIPPING: 'Shipping only',
-  LOCAL_PICKUP: 'Local pickup only',
-  BOTH: 'Shipping or local pickup',
+  NEW: 'Nuevo',
+  LIKE_NEW: 'Como Nuevo',
+  GOOD: 'Buen Estado',
+  FAIR: 'Estado Regular',
+  POOR: 'Mal Estado',
 };
 
 interface Props { product: Product }
 
 export function ProductInfo({ product }: Props) {
   const { user } = useAuthStore();
-  const { addItem } = useCartStore();
-  const [qty, setQty] = useState(1);
+  const router = useRouter();
 
-  const handleAddToCart = () => {
-    addItem(product as any, qty);
-    toast.success(`Added ${qty} × "${product.title}" to cart`);
+  const handleContact = () => {
+    if (!user) {
+      toast.error('Necesitás registrarte para contactar al vendedor');
+      router.push('/auth/register');
+      return;
+    }
+    router.push(`/messages?product=${product.id}`);
   };
 
   const handleShare = async () => {
@@ -53,17 +47,16 @@ export function ProductInfo({ product }: Props) {
       await navigator.share({ title: product.title, url: window.location.href });
     } catch {
       await navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard');
+      toast.success('Enlace copiado al portapapeles');
     }
   };
 
   const isSold = product.status === 'SOLD';
   const isOutOfStock = product.stock < 1;
-  const disabled = isSold || isOutOfStock;
 
   return (
     <div className="space-y-5">
-      {/* Title */}
+      {/* Título */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white leading-tight">
           {product.title}
@@ -73,94 +66,84 @@ export function ProductInfo({ product }: Props) {
             {CONDITION_MAP[product.condition] ?? product.condition}
           </span>
           {isSold && (
-            <span className="badge bg-red-50 text-red-600 text-xs px-2 py-0.5 rounded-full">Sold</span>
+            <span className="badge bg-red-50 text-red-600 text-xs px-2 py-0.5 rounded-full">Vendido</span>
           )}
           {isOutOfStock && !isSold && (
-            <span className="badge bg-orange-50 text-orange-600 text-xs px-2 py-0.5 rounded-full">Out of stock</span>
+            <span className="badge bg-orange-50 text-orange-600 text-xs px-2 py-0.5 rounded-full">Sin stock</span>
           )}
         </div>
       </div>
 
-      {/* Price */}
+      {/* Precio */}
       <div className="flex items-baseline gap-3">
         <span className="text-3xl font-bold text-slate-900 dark:text-white">
           {formatCurrency(product.price, product.currency)}
         </span>
       </div>
 
-      {/* Description */}
+      {/* Descripción */}
       {product.description && (
         <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm whitespace-pre-line">
           {product.description}
         </p>
       )}
 
-      {/* Delivery & Location */}
+      {/* Ubicación y stock */}
       <div className="space-y-1.5 text-sm text-slate-600 dark:text-slate-400">
-        {product.delivery && (
-          <div className="flex items-center gap-2">
-            <Truck className="w-4 h-4 shrink-0" />
-            <span>{DELIVERY_MAP[product.delivery] ?? product.delivery}</span>
-          </div>
-        )}
         {product.location && (
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 shrink-0" />
             <span>{product.location}</span>
           </div>
         )}
-        <div className="flex items-center gap-2">
-          <Package className="w-4 h-4 shrink-0" />
-          <span>{product.stock} available</span>
-        </div>
+        {!isSold && (
+          <div className="flex items-center gap-2">
+            <Package className="w-4 h-4 shrink-0" />
+            <span>{product.stock} disponible{product.stock !== 1 ? 's' : ''}</span>
+          </div>
+        )}
       </div>
 
-      {/* Qty + Add to cart */}
-      {!disabled && (
-        <div className="flex items-center gap-3">
-          <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
-            <button
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="w-9 h-10 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-lg"
-            >−</button>
-            <span className="w-10 text-center font-medium text-sm">{qty}</span>
-            <button
-              onClick={() => setQty((q) => Math.min(product.stock, q + 1))}
-              className="w-9 h-10 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-lg"
-            >+</button>
-          </div>
-          <button
-            onClick={handleAddToCart}
-            className="flex-1 btn-primary flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-semibold"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            Add to Cart
-          </button>
-        </div>
+      {/* CTA principal — Contactar vendedor */}
+      {!isSold && (
+        <button
+          onClick={handleContact}
+          className="w-full btn-primary flex items-center justify-center gap-2 py-4 rounded-xl text-base font-semibold"
+        >
+          <MessageCircle className="w-5 h-5" />
+          Contactar vendedor
+        </button>
       )}
 
-      {/* Actions row */}
+      {/* Aviso si no está registrado */}
+      {!user && (
+        <p className="text-xs text-slate-500 text-center">
+          Necesitás{' '}
+          <a href="/auth/register" className="text-primary-600 hover:underline font-medium">
+            registrarte
+          </a>
+          {' '}e iniciar sesión para poder contactar al vendedor.
+        </p>
+      )}
+
+      {/* Acciones secundarias */}
       <div className="flex items-center gap-2">
-        <a
-          href={`/messages?product=${product.id}`}
-          className="flex-1 btn-secondary flex items-center justify-center gap-2 h-10 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700"
-        >
-          <MessageCircle className="w-4 h-4" />
-          Contact Seller
-        </a>
         <button
           onClick={handleShare}
-          className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Share"
+          className="flex-1 flex items-center justify-center gap-2 h-10 rounded-lg border border-slate-200
+                     dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm font-medium"
         >
           <Share2 className="w-4 h-4 text-slate-500" />
+          Compartir
         </button>
         <a
           href={`/report?productId=${product.id}`}
-          className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          aria-label="Report listing"
+          className="flex items-center justify-center gap-2 h-10 px-4 rounded-lg border border-slate-200
+                     dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm"
+          aria-label="Denunciar publicación"
         >
           <Flag className="w-4 h-4 text-slate-500" />
+          <span className="hidden sm:inline text-slate-500">Denunciar</span>
         </a>
       </div>
 
@@ -174,7 +157,6 @@ export function ProductInfo({ product }: Props) {
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800
                          text-xs text-slate-600 dark:text-slate-300 hover:bg-primary-50 hover:text-primary-700 transition-colors"
             >
-              <Tag className="w-3 h-3" />
               {tag.name}
             </a>
           ))}

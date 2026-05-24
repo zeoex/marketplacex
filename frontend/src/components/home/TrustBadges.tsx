@@ -1,28 +1,28 @@
-import { ShieldCheck, Truck, RotateCcw, CreditCard } from 'lucide-react';
+import { ShieldCheck, MessageCircle, Star, Gift } from 'lucide-react';
 
 const BADGES = [
   {
     icon: ShieldCheck,
-    title: 'Buyer Protection',
-    desc: 'Every purchase is covered by our guarantee',
+    title: 'Usuarios Verificados',
+    desc: 'Solo usuarios con identidad validada pueden publicar',
     color: 'text-green-600',
   },
   {
-    icon: Truck,
-    title: 'Fast Shipping',
-    desc: 'Same-day local pickup available',
+    icon: MessageCircle,
+    title: 'Contacto Directo',
+    desc: 'Hablá directamente con el vendedor sin intermediarios',
     color: 'text-blue-600',
   },
   {
-    icon: RotateCcw,
-    title: 'Easy Returns',
-    desc: '30-day return policy on all items',
-    color: 'text-purple-600',
+    icon: Star,
+    title: 'Sistema de Reputación',
+    desc: 'Calificaciones reales de compradores y vendedores',
+    color: 'text-yellow-500',
   },
   {
-    icon: CreditCard,
-    title: 'Secure Payments',
-    desc: 'Multiple secure payment options',
+    icon: Gift,
+    title: '100% Gratuito',
+    desc: 'Publicar y contactar vendedores es completamente gratis',
     color: 'text-primary-600',
   },
 ];

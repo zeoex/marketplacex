@@ -5,16 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, ShoppingCart, Bell, User, Menu, X,
+  Search, Bell, User, Menu, X,
   Plus, Moon, Sun, ChevronDown, MapPin,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
-import { useCartStore } from '@/store/cart';
 import { useTheme } from 'next-themes';
 
 export function Navbar() {
   const { user, logout } = useAuthStore();
-  const { itemCount, toggleCart } = useCartStore();
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -51,7 +49,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Search */}
+          {/* Búsqueda */}
           <form onSubmit={handleSearch} className="flex-1 max-w-xl">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -59,7 +57,7 @@ export function Navbar() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search products, brands, categories..."
+                placeholder="Buscar productos, marcas, categorías..."
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-transparent
                            rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500
                            focus:bg-white dark:focus:bg-slate-700 transition-all"
@@ -67,55 +65,36 @@ export function Navbar() {
             </div>
           </form>
 
-          {/* Actions */}
+          {/* Acciones */}
           <div className="flex items-center gap-1">
-            {/* Theme toggle */}
+            {/* Cambiar tema */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden md:flex"
-              aria-label="Toggle theme"
+              aria-label="Cambiar tema"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
 
-            {/* Notifications */}
+            {/* Notificaciones */}
             {user && (
               <Link
                 href="/notifications"
                 className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative hidden md:flex"
-                aria-label="Notifications"
+                aria-label="Notificaciones"
               >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </Link>
             )}
 
-            {/* Cart */}
-            <button
-              onClick={toggleCart}
-              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative"
-              aria-label={`Cart (${itemCount} items)`}
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {itemCount > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -top-1 -right-1 w-5 h-5 bg-brand text-white text-xs
-                             rounded-full flex items-center justify-center font-bold"
-                >
-                  {itemCount > 99 ? '99+' : itemCount}
-                </motion.span>
-              )}
-            </button>
-
-            {/* Sell button */}
+            {/* Publicar */}
             <Link href="/products/new" className="btn-brand hidden sm:flex text-sm px-4 py-2">
               <Plus className="w-4 h-4" />
-              Sell
+              Publicar
             </Link>
 
-            {/* User menu */}
+            {/* Menú usuario */}
             {user ? (
               <div className="relative">
                 <button
@@ -146,13 +125,12 @@ export function Navbar() {
                         <p className="text-xs text-slate-500">@{user.username}</p>
                       </div>
                       {[
-                        { href: `/profile/${user.username}`, label: 'My Profile' },
-                        { href: '/orders', label: 'My Orders' },
-                        { href: '/products/my', label: 'My Listings' },
-                        { href: '/favorites', label: 'Favorites' },
-                        { href: '/messages', label: 'Messages' },
-                        { href: '/settings', label: 'Settings' },
-                        ...(user.role === 'ADMIN' ? [{ href: '/admin', label: '⚙️ Admin Panel' }] : []),
+                        { href: `/profile/${user.username}`, label: 'Mi Perfil' },
+                        { href: '/products/my', label: 'Mis Publicaciones' },
+                        { href: '/favorites', label: 'Favoritos' },
+                        { href: '/messages', label: 'Mensajes' },
+                        { href: '/settings', label: 'Configuración' },
+                        ...(user.role === 'ADMIN' ? [{ href: '/admin', label: '⚙️ Panel Admin' }] : []),
                       ].map((item) => (
                         <Link
                           key={item.href}
@@ -168,7 +146,7 @@ export function Navbar() {
                           onClick={() => { logout(); setIsUserMenuOpen(false); }}
                           className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                         >
-                          Log out
+                          Cerrar sesión
                         </button>
                       </div>
                     </motion.div>
@@ -177,23 +155,23 @@ export function Navbar() {
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Link href="/auth/login" className="btn-outline text-sm px-4 py-2">Log in</Link>
-                <Link href="/auth/register" className="btn-primary text-sm px-4 py-2">Sign up</Link>
+                <Link href="/auth/login" className="btn-outline text-sm px-4 py-2">Iniciar sesión</Link>
+                <Link href="/auth/register" className="btn-primary text-sm px-4 py-2">Registrarse</Link>
               </div>
             )}
 
-            {/* Mobile menu */}
+            {/* Menú mobile */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-              aria-label="Menu"
+              aria-label="Menú"
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Menú mobile expandido */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -204,19 +182,18 @@ export function Navbar() {
             >
               {user ? (
                 <>
-                  <Link href={`/profile/${user.username}`} className="block px-2 py-2 text-sm hover:text-primary-600">Profile</Link>
-                  <Link href="/orders" className="block px-2 py-2 text-sm hover:text-primary-600">Orders</Link>
-                  <Link href="/messages" className="block px-2 py-2 text-sm hover:text-primary-600">Messages</Link>
-                  <Link href="/favorites" className="block px-2 py-2 text-sm hover:text-primary-600">Favorites</Link>
+                  <Link href={`/profile/${user.username}`} className="block px-2 py-2 text-sm hover:text-primary-600">Mi Perfil</Link>
+                  <Link href="/messages" className="block px-2 py-2 text-sm hover:text-primary-600">Mensajes</Link>
+                  <Link href="/favorites" className="block px-2 py-2 text-sm hover:text-primary-600">Favoritos</Link>
                   <Link href="/products/new" className="btn-brand w-full justify-center">
-                    <Plus className="w-4 h-4" /> Sell something
+                    <Plus className="w-4 h-4" /> Publicar algo
                   </Link>
-                  <button onClick={logout} className="w-full text-left px-2 py-2 text-sm text-red-500">Log out</button>
+                  <button onClick={logout} className="w-full text-left px-2 py-2 text-sm text-red-500">Cerrar sesión</button>
                 </>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <Link href="/auth/login" className="btn-outline w-full justify-center">Log in</Link>
-                  <Link href="/auth/register" className="btn-primary w-full justify-center">Sign up</Link>
+                  <Link href="/auth/login" className="btn-outline w-full justify-center">Iniciar sesión</Link>
+                  <Link href="/auth/register" className="btn-primary w-full justify-center">Registrarse</Link>
                 </div>
               )}
             </motion.div>

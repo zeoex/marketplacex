@@ -24,9 +24,12 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/start.sh ./start.sh
 
 RUN mkdir -p /app/uploads && chown -R nestjs:nodejs /app/uploads
+RUN sed -i 's/\r$//' /app/start.sh && chmod +x /app/start.sh
 USER nestjs
 
 EXPOSE 3001
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/main"]
+CMD ["/app/start.sh"]
