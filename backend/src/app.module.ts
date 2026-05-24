@@ -39,21 +39,26 @@ import { PrismaModule } from './common/prisma/prisma.module';
       ],
     }),
 
-    // Cache (Redis)
+    // Cache (Redis with memory fallback)
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => ({
-        store: await redisStore({
-          socket: {
-            host: config.get('REDIS_HOST', 'localhost'),
-            port: config.get('REDIS_PORT', 6379),
-          },
-          password: config.get('REDIS_PASSWORD'),
-          ttl: 60 * 5 * 1000, // 5 minutes default
-        }),
-      }),
+      useFactory: async (config: ConfigService) => {
+        const host = config.get('REDIS_HOST');
+        if (!host) return { ttl: 60 * 5 * 1000 }; // memory store fallback
+        try {
+          const store = await redisStore({
+            socket: { host, port: config.get('REDIS_PORT', 6379) },
+            password: config.get('REDIS_PASSWORD'),
+            ttl: 60 * 5 * 1000,
+          });
+          return { store };
+        } catch {
+          console.warn('Redis unavailable — falling back to memory cache');
+          return { ttl: 60 * 5 * 1000 };
+        }
+      },
     }),
 
     // Cron jobs
