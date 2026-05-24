@@ -4,8 +4,8 @@ WORKDIR /app
 
 # ─── Dependencies ─────────────────────────────────────────
 FROM base AS deps
-COPY package*.json ./
-RUN npm ci
+COPY package.json ./
+RUN npm install --no-fund --no-audit
 
 # ─── Build ────────────────────────────────────────────────
 FROM base AS builder
