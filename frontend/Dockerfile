@@ -2,9 +2,8 @@ FROM node:20-alpine AS base
 WORKDIR /app
 
 FROM base AS deps
-# cache-bust: 20260524
 COPY package*.json ./
-RUN npm install
+RUN npm ci --legacy-peer-deps
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
