@@ -10,7 +10,7 @@ export class ProductsService {
   async create(sellerId: string, dto: CreateProductDto, files: Express.Multer.File[]) {
     const slug = await this.generateSlug(dto.title);
 
-    const product = await this.prisma.product.create({
+    return this.prisma.product.create({
       data: {
         title: dto.title,
         slug,
@@ -19,23 +19,16 @@ export class ProductsService {
         currency: dto.currency || 'USD',
         stock: dto.stock || 1,
         condition: dto.condition,
-        delivery: dto.delivery,
+        delivery: dto.delivery || 'BOTH',
         shippingCost: dto.shippingCost,
         location: dto.location,
         latitude: dto.latitude,
         longitude: dto.longitude,
-        status: dto.status || 'DRAFT',
+        status: (dto.status as any) || 'DRAFT',
         sellerId,
         categoryId: dto.categoryId,
-        tags: dto.tags
-          ? { create: dto.tags.map((name) => ({ name })) }
-          : undefined,
-        variants: dto.variants
-          ? { create: dto.variants }
-          : undefined,
-        images: files.length
-          ? { create: files.map((f, i) => ({ url: `/uploads/${f.filename}`, sortOrder: i })) }
-          : undefined,
+        tags: dto.tags ? { create: dto.tags.map((name) => ({ name })) } : undefined,
+        variants: dto.variants ? { create: dto.variants } : undefined,
       },
       include: {
         images: true,
@@ -45,8 +38,6 @@ export class ProductsService {
         seller: { select: { id: true, name: true, username: true, avatarUrl: true, reputationScore: true } },
       },
     });
-
-    return product;
   }
 
   async findAll(query: QueryProductsDto, userId?: string) {
@@ -58,9 +49,9 @@ export class ProductsService {
 
     const where: any = { status: 'ACTIVE' };
     if (categoryId) where.categoryId = categoryId;
-    if (minPrice || maxPrice) where.price = {};
-    if (minPrice) where.price.gte = minPrice;
-    if (maxPrice) where.price.lte = maxPrice;
+    if (minPrice !== undefined || maxPrice !== undefined) where.price = {};
+    if (minPrice !== undefined) where.price.gte = minPrice;
+    if (maxPrice !== undefined) where.price.lte = maxPrice;
     if (condition) where.condition = condition;
     if (delivery) where.delivery = delivery;
     if (location) where.location = { contains: location, mode: 'insensitive' };
@@ -89,10 +80,7 @@ export class ProductsService {
       this.prisma.product.count({ where }),
     ]);
 
-    return {
-      data,
-      meta: { total, page, limit, pages: Math.ceil(total / limit) },
-    };
+    return { data, meta: { total, page, limit, pages: Math.ceil(total / limit) } };
   }
 
   async findOne(slugOrId: string) {
@@ -111,23 +99,20 @@ export class ProductsService {
           select: {
             id: true, name: true, username: true, avatarUrl: true,
             reputationScore: true, totalSales: true, createdAt: true,
-            _count: { select: { products: true, reviewsReceived: true } },
+            _count: { select: { products: true } },
           },
         },
         _count: { select: { favorites: true, reviews: true } },
         reviews: {
           take: 5,
           orderBy: { createdAt: 'desc' },
-          include: {
-            reviewer: { select: { id: true, name: true, avatarUrl: true } },
-          },
+          include: { reviewer: { select: { id: true, name: true, avatarUrl: true } } },
         },
       },
     });
 
     if (!product) throw new NotFoundException('Product not found');
 
-    // Increment views
     await this.prisma.product.update({
       where: { id: product.id },
       data: { views: { increment: 1 } },
@@ -145,12 +130,7 @@ export class ProductsService {
       where: { id },
       data: {
         ...dto,
-        tags: dto.tags
-          ? {
-              deleteMany: {},
-              create: dto.tags.map((name) => ({ name })),
-            }
-          : undefined,
+        tags: dto.tags ? { deleteMany: {}, create: dto.tags.map((name) => ({ name })) } : undefined,
       },
       include: { images: true, tags: true, variants: true, category: true },
     });
@@ -161,10 +141,7 @@ export class ProductsService {
     if (!product) throw new NotFoundException('Product not found');
     if (product.sellerId !== userId) throw new ForbiddenException();
 
-    await this.prisma.product.update({
-      where: { id },
-      data: { status: 'DELETED' },
-    });
+    await this.prisma.product.update({ where: { id }, data: { status: 'DELETED' } });
     return { message: 'Product deleted' };
   }
 
@@ -183,16 +160,12 @@ export class ProductsService {
   async getRelated(productId: string) {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
-      select: { categoryId: true, sellerId: true },
+      select: { categoryId: true },
     });
     if (!product) return [];
 
     return this.prisma.product.findMany({
-      where: {
-        categoryId: product.categoryId,
-        status: 'ACTIVE',
-        id: { not: productId },
-      },
+      where: { categoryId: product.categoryId, status: 'ACTIVE', id: { not: productId } },
       include: { images: { take: 1 } },
       take: 8,
     });

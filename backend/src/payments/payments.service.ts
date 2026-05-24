@@ -197,6 +197,59 @@ export class PaymentsService {
     });
   }
 
+  // ─── MercadoPago Checkout ────────────────────────────────
+  async createMercadoPagoCheckout(userId: string, dto: CreateCheckoutDto) {
+    const order = await this.createOrder(userId, dto);
+    const mpAccessToken = this.config.get<string>('MERCADOPAGO_ACCESS_TOKEN');
+    if (!mpAccessToken) throw new BadRequestException('MercadoPago not configured');
+
+    const items = await Promise.all(
+      dto.items.map(async (item) => {
+        const product = await this.prisma.product.findUnique({ where: { id: item.productId } });
+        if (!product) throw new NotFoundException(`Product ${item.productId} not found`);
+        return {
+          id: product.id,
+          title: product.title,
+          quantity: item.quantity,
+          unit_price: Number(product.price),
+          currency_id: product.currency,
+        };
+      }),
+    );
+
+    const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${mpAccessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items,
+        external_reference: order.id,
+        back_urls: {
+          success: `${this.config.get('APP_URL')}/checkout/success`,
+          failure: `${this.config.get('APP_URL')}/checkout/cancel`,
+          pending: `${this.config.get('APP_URL')}/checkout/pending`,
+        },
+        auto_return: 'approved',
+        notification_url: `${this.config.get('API_URL')}/api/v1/payments/webhook/mercadopago`,
+      }),
+    });
+
+    const preference = await response.json() as any;
+
+    await this.prisma.payment.create({
+      data: {
+        orderId: order.id,
+        userId,
+        method: 'MERCADOPAGO',
+        status: 'PENDING',
+        amount: order.totalAmount,
+        currency: 'USD',
+        externalId: preference.id,
+      },
+    });
+
+    return { preferenceId: preference.id, initPoint: preference.init_point, orderId: order.id };
+  }
+
   // ─── Payment History ──────────────────────────────────────
   async getPaymentHistory(userId: string) {
     return this.prisma.payment.findMany({

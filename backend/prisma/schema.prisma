@@ -15,6 +15,7 @@ enum Role {
   USER
   SELLER
   ADMIN
+  SUPER_ADMIN
 }
 
 enum AuthProvider {
@@ -28,9 +29,11 @@ enum AuthProvider {
 
 enum ProductStatus {
   DRAFT
+  PENDING
   ACTIVE
   PAUSED
   SOLD
+  REJECTED
   DELETED
 }
 
