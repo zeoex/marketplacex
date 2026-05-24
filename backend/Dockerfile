@@ -4,6 +4,7 @@ WORKDIR /app
 
 # ─── Dependencies ─────────────────────────────────────────
 FROM base AS deps
+RUN echo "RAILWAY BUILD v1.0.1 - npm install"
 COPY package.json ./
 RUN npm install --no-fund --no-audit
 
