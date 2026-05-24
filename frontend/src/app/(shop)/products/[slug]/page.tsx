@@ -13,7 +13,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const product = await api.products.getOne(slug);
+    const product = await api.products.getOne(slug) as any;
     return {
       title: product.title,
       description: product.description?.substring(0, 160),
@@ -35,9 +35,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  let product;
+  let product: any;
   try {
-    product = await api.products.getOne(slug);
+    product = await api.products.getOne(slug) as any;
   } catch {
     notFound();
   }
