@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Users, Package, ShoppingCart, DollarSign, TrendingUp, AlertTriangle, Eye, Ban } from 'lucide-react';
