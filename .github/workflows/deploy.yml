@@ -100,34 +100,34 @@ jobs:
     steps:
       - name: Update Railway backend image
         run: |
-          curl -s -X POST https://backboard.railway.app/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer ${RAILWAY_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "{\"query\":\"mutation{serviceInstanceUpdate(serviceId:\\\"56557f2c-4205-4897-b42b-1a4521891eaa\\\",input:{source:{image:\\\"$BACKEND_IMAGE:latest\\\"}})}\"}"`
+            -d '{"query":"mutation{serviceInstanceUpdate(serviceId:\"56557f2c-4205-4897-b42b-1a4521891eaa\",input:{source:{image:\"'"${BACKEND_IMAGE}"':latest\"}})}"}'
 
       - name: Deploy Railway backend
         run: |
-          curl -s -X POST https://backboard.railway.app/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer ${RAILWAY_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "{\"query\":\"mutation{serviceInstanceDeploy(serviceId:\\\"56557f2c-4205-4897-b42b-1a4521891eaa\\\",environmentId:\\\"$RAILWAY_ENV_ID\\\")}\"}"`
+            -d '{"query":"mutation{serviceInstanceDeploy(serviceId:\"56557f2c-4205-4897-b42b-1a4521891eaa\",environmentId:\"'"${RAILWAY_ENV_ID}"'\")}"}'
 
       - name: Update Railway frontend image
         run: |
-          curl -s -X POST https://backboard.railway.app/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer ${RAILWAY_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "{\"query\":\"mutation{serviceInstanceUpdate(serviceId:\\\"444f4424-9271-4183-81d7-729abc7040bd\\\",input:{source:{image:\\\"$FRONTEND_IMAGE:latest\\\"}})}\"}"`
+            -d '{"query":"mutation{serviceInstanceUpdate(serviceId:\"444f4424-9271-4183-81d7-729abc7040bd\",input:{source:{image:\"'"${FRONTEND_IMAGE}"':latest\"}})}"}'
 
       - name: Deploy Railway frontend
         run: |
-          curl -s -X POST https://backboard.railway.app/graphql/v2 \
-            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer ${RAILWAY_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "{\"query\":\"mutation{serviceInstanceDeploy(serviceId:\\\"444f4424-9271-4183-81d7-729abc7040bd\\\",environmentId:\\\"$RAILWAY_ENV_ID\\\")}\"}"`
+            -d '{"query":"mutation{serviceInstanceDeploy(serviceId:\"444f4424-9271-4183-81d7-729abc7040bd\",environmentId:\"'"${RAILWAY_ENV_ID}"'\")}"}'
 
       - name: Summary
         run: |
-          echo "✅ Deployed MarketPlaceX to Railway"
+          echo "Deployed MarketPlaceX to Railway"
           echo "Backend: https://backend-production-3f29a.up.railway.app"
           echo "Frontend: https://frontend-production-0151.up.railway.app"
