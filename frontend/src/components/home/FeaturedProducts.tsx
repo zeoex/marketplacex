@@ -9,7 +9,7 @@ async function getFeaturedProducts() {
     });
     if (!res.ok) return [];
     const data = await res.json();
-    return data?.data ?? data ?? [];
+    return data?.data?.data ?? data?.data ?? data ?? [];
   } catch {
     return [];
   }

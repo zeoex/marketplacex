@@ -13,7 +13,8 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const product = await api.products.getOne(slug) as any;
+    const res = await api.products.getOne(slug) as any;
+    const product = res?.data ?? res;
     return {
       title: product.title,
       description: product.description?.substring(0, 160),
@@ -37,10 +38,14 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   let product: any;
   try {
-    product = await api.products.getOne(slug) as any;
+    const res = await api.products.getOne(slug) as any;
+    // Unwrap TransformInterceptor envelope { success, data: {...} }
+    product = res?.data ?? res;
   } catch {
     notFound();
   }
+
+  if (!product?.id) notFound();
 
   return (
     <main className="container-app py-8">

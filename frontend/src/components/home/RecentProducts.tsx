@@ -9,7 +9,8 @@ async function getRecentProducts() {
     });
     if (!res.ok) return [];
     const data = await res.json();
-    return data?.data ?? data ?? [];
+    // Unwrap: { success, data: { data: [...], meta } } or { success, data: [...] }
+    return data?.data?.data ?? data?.data ?? data ?? [];
   } catch {
     return [];
   }
