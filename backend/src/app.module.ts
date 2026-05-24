@@ -4,6 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { redisStore } from 'cache-manager-redis-yet';
+import { HealthController } from './health/health.controller';
 
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -23,6 +24,7 @@ import { AdminModule } from './admin/admin.module';
 import { PrismaModule } from './common/prisma/prisma.module';
 
 @Module({
+  controllers: [HealthController],
   imports: [
     // Config
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
