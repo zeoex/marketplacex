@@ -37,7 +37,7 @@ export function Footer() {
           {/* Marca */}
           <div className="lg:col-span-2">
             <Link href="/" className="text-white font-bold text-xl">
-              MarketPlaceX
+              MarketStore
             </Link>
             <p className="mt-3 text-sm text-slate-400 max-w-xs">
               La forma más rápida de comprar y vender en Argentina. Publicá gratis y contactate directamente con los vendedores.
@@ -48,7 +48,7 @@ export function Footer() {
             </div>
             <div className="flex items-center gap-1 mt-1 text-xs text-slate-500">
               <Mail className="w-3 h-3" />
-              <span>soporte@marketplacex.com</span>
+              <span>soporte@marketstore.com.ar</span>
             </div>
             <div className="flex items-center gap-3 mt-4">
               {SOCIAL.map(({ icon: Icon, href, label }) => (
@@ -110,7 +110,7 @@ export function Footer() {
 
       <div className="border-t border-slate-800">
         <div className="container-app py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} MarketPlaceX. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} MarketStore. Todos los derechos reservados.</p>
           <div className="flex items-center gap-1">
             <Phone className="w-3 h-3" />
             <span>Soporte 24/7</span>

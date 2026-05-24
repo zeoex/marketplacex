@@ -57,7 +57,7 @@ export default function LoginPage() {
               <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center">
                 <span className="text-white font-black">M</span>
               </div>
-              Market<span className="text-brand">PlaceX</span>
+              Market<span className="text-brand">Store</span>
             </Link>
             <h1 className="text-2xl font-bold">Bienvenido/a de nuevo</h1>
             <p className="text-slate-500 mt-1 text-sm">Iniciá sesión en tu cuenta</p>

@@ -10,10 +10,10 @@ import { ProductCard } from '@/components/product/ProductCard';
 import { ProductCardSkeleton } from '@/components/product/ProductCardSkeleton';
 
 const SORT_OPTIONS = [
-  { value: 'createdAt-desc', label: 'Most Recent' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'views-desc', label: 'Most Viewed' },
+  { value: 'createdAt-desc', label: 'Más recientes' },
+  { value: 'price-asc', label: 'Precio: menor a mayor' },
+  { value: 'price-desc', label: 'Precio: mayor a menor' },
+  { value: 'views-desc', label: 'Más vistos' },
 ];
 
 const CONDITIONS = ['NEW', 'LIKE_NEW', 'GOOD', 'FAIR', 'POOR'];
@@ -66,10 +66,10 @@ export function ProductsContent() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-bold">
-            {filters.search ? `Results for "${filters.search}"` : 'Browse Listings'}
+            {filters.search ? `Resultados para "${filters.search}"` : 'Explorar publicaciones'}
           </h1>
           {meta.total !== undefined && (
-            <p className="text-sm text-slate-500 mt-0.5">{meta.total.toLocaleString()} listings</p>
+            <p className="text-sm text-slate-500 mt-0.5">{meta.total.toLocaleString()} publicaciones</p>
           )}
         </div>
         <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export function ProductsContent() {
             className={`btn-outline py-2 px-4 text-sm flex items-center gap-2 ${showFilters ? 'border-primary-500' : ''}`}
           >
             <SlidersHorizontal className="w-4 h-4" />
-            Filters
+            Filtros
             {activeFiltersCount > 0 && (
               <span className="w-5 h-5 bg-primary-600 text-white rounded-full text-xs flex items-center justify-center">
                 {activeFiltersCount}
@@ -113,15 +113,15 @@ export function ProductsContent() {
           <motion.aside initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="w-64 shrink-0">
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 sticky top-24 space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold">Filters</h3>
+                <h3 className="font-bold">Filtros</h3>
                 {activeFiltersCount > 0 && (
                   <button onClick={clearFilters} className="text-xs text-red-500 hover:underline flex items-center gap-1">
-                    <X className="w-3 h-3" /> Clear all
+                    <X className="w-3 h-3" /> Limpiar
                   </button>
                 )}
               </div>
               <div>
-                <h4 className="text-sm font-semibold mb-2">Category</h4>
+                <h4 className="text-sm font-semibold mb-2">Categoría</h4>
                 <div className="space-y-1">
                   {catList.filter((c: any) => !c.parentId).map((cat: any) => (
                     <button key={cat.id} onClick={() => updateFilter('categoryId', filters.categoryId === cat.id ? '' : cat.id)}
@@ -132,14 +132,14 @@ export function ProductsContent() {
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-semibold mb-2">Price Range</h4>
+                <h4 className="text-sm font-semibold mb-2">Rango de precio</h4>
                 <div className="flex gap-2">
-                  <input type="number" value={filters.minPrice} onChange={(e) => updateFilter('minPrice', e.target.value)} placeholder="Min" className="input-field py-2 text-sm w-1/2" />
-                  <input type="number" value={filters.maxPrice} onChange={(e) => updateFilter('maxPrice', e.target.value)} placeholder="Max" className="input-field py-2 text-sm w-1/2" />
+                  <input type="number" value={filters.minPrice} onChange={(e) => updateFilter('minPrice', e.target.value)} placeholder="Mín" className="input-field py-2 text-sm w-1/2" />
+                  <input type="number" value={filters.maxPrice} onChange={(e) => updateFilter('maxPrice', e.target.value)} placeholder="Máx" className="input-field py-2 text-sm w-1/2" />
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-semibold mb-2">Condition</h4>
+                <h4 className="text-sm font-semibold mb-2">Condición</h4>
                 <div className="space-y-1">
                   {CONDITIONS.map((c) => (
                     <button key={c} onClick={() => updateFilter('condition', filters.condition === c ? '' : c)}
@@ -150,8 +150,8 @@ export function ProductsContent() {
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-semibold mb-2">Location</h4>
-                <input type="text" value={filters.location} onChange={(e) => updateFilter('location', e.target.value)} placeholder="City, state..." className="input-field py-2 text-sm" />
+                <h4 className="text-sm font-semibold mb-2">Ubicación</h4>
+                <input type="text" value={filters.location} onChange={(e) => updateFilter('location', e.target.value)} placeholder="Ciudad, provincia..." className="input-field py-2 text-sm" />
               </div>
             </div>
           </motion.aside>
@@ -164,9 +164,9 @@ export function ProductsContent() {
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">No listings found</p>
-              <p className="text-slate-400 text-sm">Try adjusting your filters</p>
-              {activeFiltersCount > 0 && <button onClick={clearFilters} className="btn-primary mt-4">Clear filters</button>}
+              <p className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">No se encontraron publicaciones</p>
+              <p className="text-slate-400 text-sm">Probá ajustando los filtros</p>
+              {activeFiltersCount > 0 && <button onClick={clearFilters} className="btn-primary mt-4">Limpiar filtros</button>}
             </div>
           ) : (
             <>

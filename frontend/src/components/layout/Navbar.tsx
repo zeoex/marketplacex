@@ -45,7 +45,7 @@ export function Navbar() {
               <span className="text-white text-sm font-black">M</span>
             </div>
             <span className="hidden sm:block">
-              Market<span className="text-brand">PlaceX</span>
+              Market<span className="text-brand">Store</span>
             </span>
           </Link>
 

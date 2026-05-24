@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     };
   } catch {
-    return { title: 'Product not found' };
+    return { title: 'Publicación no encontrada' };
   }
 }
 
@@ -46,9 +46,9 @@ export default async function ProductPage({ params }: Props) {
     <main className="container-app py-8">
       {/* Breadcrumb */}
       <nav className="text-sm text-slate-500 mb-6 flex items-center gap-2">
-        <a href="/" className="hover:text-primary-600">Home</a>
+        <a href="/" className="hover:text-primary-600">Inicio</a>
         <span>/</span>
-        <a href="/products" className="hover:text-primary-600">Products</a>
+        <a href="/products" className="hover:text-primary-600">Publicaciones</a>
         <span>/</span>
         <a href={`/products?category=${product.category?.slug}`} className="hover:text-primary-600">
           {product.category?.name}
@@ -70,7 +70,7 @@ export default async function ProductPage({ params }: Props) {
 
       {/* Related */}
       <section>
-        <h2 className="text-xl font-bold mb-6">Similar Listings</h2>
+        <h2 className="text-xl font-bold mb-6">Publicaciones similares</h2>
         <RelatedProducts productId={product.id} />
       </section>
     </main>
