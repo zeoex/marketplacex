@@ -24,7 +24,7 @@ export class ProductsService {
         location: dto.location,
         latitude: dto.latitude,
         longitude: dto.longitude,
-        status: (dto.status as any) || 'DRAFT',
+        status: (dto.status as any) || 'ACTIVE',
         sellerId,
         categoryId: dto.categoryId,
         tags: dto.tags ? { create: dto.tags.map((name) => ({ name })) } : undefined,
@@ -119,6 +119,25 @@ export class ProductsService {
     });
 
     return product;
+  }
+
+  async findMine(userId: string, query: QueryProductsDto) {
+    const { page = 1, limit = 20, sortBy = 'createdAt', order = 'desc' } = query;
+    const [data, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where: { sellerId: userId, status: { not: 'DELETED' } },
+        include: {
+          images: { take: 1, orderBy: { sortOrder: 'asc' } },
+          category: true,
+          _count: { select: { favorites: true } },
+        },
+        orderBy: { [sortBy]: order },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.product.count({ where: { sellerId: userId, status: { not: 'DELETED' } } }),
+    ]);
+    return { data, meta: { total, page, limit, pages: Math.ceil(total / limit) } };
   }
 
   async update(id: string, userId: string, dto: UpdateProductDto) {

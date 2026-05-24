@@ -26,6 +26,13 @@ export class ProductsController {
     return this.productsService.getFeatured();
   }
 
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  findMine(@Query() query: QueryProductsDto, @Request() req: any) {
+    return this.productsService.findMine(req.user.id, query);
+  }
+
   @Get(':slugOrId')
   findOne(@Param('slugOrId') slugOrId: string) {
     return this.productsService.findOne(slugOrId);

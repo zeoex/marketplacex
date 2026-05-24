@@ -47,7 +47,7 @@ export class AdminService {
     this.assertAdmin(role);
     const skip = (page - 1) * limit;
     return this.prisma.product.findMany({
-      where: { status: ProductStatus.PENDING },
+      where: { status: { in: [ProductStatus.PENDING, ProductStatus.DRAFT as any] } },
       include: { seller: { select: { id: true, name: true, email: true } }, images: { take: 1 } },
       orderBy: { createdAt: 'desc' },
       skip,

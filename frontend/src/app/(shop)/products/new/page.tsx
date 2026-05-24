@@ -65,6 +65,7 @@ export default function NewProductPage() {
     mutationFn: (formData: FormData) => {
       const fd = new FormData();
       Object.entries(formData).forEach(([k, v]) => fd.append(k, v));
+      fd.append('status', 'ACTIVE');
       files.forEach((f) => fd.append('images', f));
       return api.products.create(fd);
     },
