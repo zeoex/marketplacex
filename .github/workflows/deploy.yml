@@ -1,0 +1,127 @@
+name: Build & Deploy to Railway
+
+on:
+  push:
+    branches: [master]
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ghcr.io/zeoex/marketplacex-backend
+  FRONTEND_IMAGE: ghcr.io/zeoex/marketplacex-frontend
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  RAILWAY_ENV_ID: ef156bab-84aa-4cc7-8c70-ddc243470767
+
+jobs:
+  build-backend:
+    name: Build Backend Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.BACKEND_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-frontend:
+    name: Build Frontend Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.FRONTEND_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-to-railway:
+    name: Deploy to Railway
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+    if: success()
+    steps:
+      - name: Update Railway backend image
+        run: |
+          curl -s -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"mutation{serviceInstanceUpdate(serviceId:\\\"56557f2c-4205-4897-b42b-1a4521891eaa\\\",input:{source:{image:\\\"$BACKEND_IMAGE:latest\\\"}})}\"}"`
+
+      - name: Deploy Railway backend
+        run: |
+          curl -s -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"mutation{serviceInstanceDeploy(serviceId:\\\"56557f2c-4205-4897-b42b-1a4521891eaa\\\",environmentId:\\\"$RAILWAY_ENV_ID\\\")}\"}"`
+
+      - name: Update Railway frontend image
+        run: |
+          curl -s -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"mutation{serviceInstanceUpdate(serviceId:\\\"444f4424-9271-4183-81d7-729abc7040bd\\\",input:{source:{image:\\\"$FRONTEND_IMAGE:latest\\\"}})}\"}"`
+
+      - name: Deploy Railway frontend
+        run: |
+          curl -s -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"mutation{serviceInstanceDeploy(serviceId:\\\"444f4424-9271-4183-81d7-729abc7040bd\\\",environmentId:\\\"$RAILWAY_ENV_ID\\\")}\"}"`
+
+      - name: Summary
+        run: |
+          echo "✅ Deployed MarketPlaceX to Railway"
+          echo "Backend: https://backend-production-3f29a.up.railway.app"
+          echo "Frontend: https://frontend-production-0151.up.railway.app"
