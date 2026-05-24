@@ -2,6 +2,7 @@ FROM node:20-alpine AS base
 WORKDIR /app
 
 FROM base AS deps
+# cache-bust: 20260524
 COPY package*.json ./
 RUN npm install
 

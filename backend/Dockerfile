@@ -4,6 +4,7 @@ WORKDIR /app
 
 # ─── Dependencies ─────────────────────────────────────────
 FROM base AS deps
+# cache-bust: 20260524
 COPY package*.json ./
 RUN npm install
 
