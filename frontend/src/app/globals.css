@@ -2,125 +2,132 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Google Fonts ─────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 97%;
+    --foreground: 222 20% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.75rem;
+    --border: 220 14% 90%;
+    --input: 220 14% 90%;
+    --primary: 187 82% 28%;
+    --primary-foreground: 0 0% 100%;
     --brand: 20 100% 60%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --radius: 10px;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 222 26% 8%;
+    --foreground: 213 31% 91%;
+    --card: 222 26% 12%;
+    --border: 222 20% 20%;
+    --input: 222 20% 20%;
+    --primary: 187 60% 40%;
+    --muted: 222 20% 16%;
+    --muted-foreground: 215 16% 55%;
   }
 }
 
 @layer base {
   * { border-color: hsl(var(--border)); }
-  body { background-color: hsl(var(--background)); color: hsl(var(--foreground)); }
-  h1, h2, h3, h4, h5, h6 { @apply font-semibold tracking-tight; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 { @apply font-bold tracking-tight; }
 }
 
+/* ── Layout ────────────────────────────────────────────── */
 @layer components {
   .container-app {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  /* Skeleton loading */
-  .skeleton {
-    @apply animate-pulse bg-slate-200 dark:bg-slate-700 rounded-lg;
+  /* ── Buttons ── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-semibold
+           rounded-[10px] transition-all duration-150 select-none
+           disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97];
   }
+  .btn-sm  { @apply btn text-sm  px-4 py-2; }
+  .btn-md  { @apply btn text-sm  px-5 py-2.5; }
+  .btn-lg  { @apply btn text-base px-7 py-3; }
 
-  /* Product card hover */
-  .product-card {
-    @apply bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700
-           transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer;
-  }
-
-  /* Button styles */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700
-           text-white font-semibold rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50
-           disabled:cursor-not-allowed shadow-sm;
+    @apply btn-md bg-primary-600 hover:bg-primary-700 text-white shadow-sm;
   }
-
   .btn-brand {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand hover:bg-brand-dark
-           text-white font-semibold rounded-xl transition-all duration-200 active:scale-95
-           disabled:opacity-50 shadow-sm;
+    @apply btn-md bg-brand hover:bg-brand-dark text-white shadow-sm;
   }
-
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-slate-200
-           dark:border-slate-600 hover:border-primary-500 hover:text-primary-600 font-semibold
-           rounded-xl transition-all duration-200 active:scale-95;
+    @apply btn-md border border-slate-200 dark:border-slate-700
+           hover:border-primary-400 hover:text-primary-600
+           dark:hover:border-primary-500 dark:hover:text-primary-400
+           bg-white dark:bg-slate-900;
+  }
+  .btn-ghost {
+    @apply btn-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300;
   }
 
-  /* Input styles */
+  /* ── Inputs ── */
   .input-field {
-    @apply w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600
-           rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-           placeholder-slate-400 transition-all duration-200;
+    @apply w-full px-4 py-2.5 bg-white dark:bg-slate-800
+           border border-slate-200 dark:border-slate-700
+           rounded-[10px] text-sm
+           focus:outline-none focus:ring-2 focus:ring-primary-400/40
+           focus:border-primary-400 dark:focus:border-primary-500
+           placeholder-slate-400 dark:placeholder-slate-500
+           transition-colors duration-150;
   }
 
-  /* Badge */
+  /* ── Cards ── */
+  .product-card {
+    @apply bg-white dark:bg-slate-800
+           rounded-[10px] overflow-hidden
+           border border-slate-200/80 dark:border-slate-700/80
+           shadow-card
+           transition-all duration-200
+           hover:shadow-card-hover hover:-translate-y-0.5
+           cursor-pointer;
+  }
+
+  /* ── Badges ── */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center gap-1 px-2 py-0.5
+           rounded-full text-2xs font-semibold tracking-wide;
   }
 
-  /* Price tag */
-  .price-tag {
-    @apply text-2xl font-bold text-slate-900 dark:text-white;
+  /* ── Section Header ── */
+  .section-header {
+    @apply flex items-center justify-between mb-5;
+  }
+  .section-title {
+    @apply text-xl font-bold text-slate-900 dark:text-white;
+  }
+  .section-link {
+    @apply text-sm font-medium text-primary-600 dark:text-primary-400
+           hover:underline underline-offset-2;
   }
 
-  /* Scrollbar */
-  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-  .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-300 dark:bg-slate-600 rounded-full; }
+  /* ── Skeleton ── */
+  .skeleton {
+    @apply animate-pulse bg-slate-100 dark:bg-slate-700 rounded-[10px];
+  }
+
+  /* ── Scrollbar ── */
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
-/* Page transitions */
+/* ── Utilities ─────────────────────────────────────────── */
 @layer utilities {
   .page-enter { animation: slideUp 0.4s ease-out; }
-  .fade-in { animation: fadeIn 0.3s ease-in-out; }
 }
-
-/* Swiper customization */
-.swiper-pagination-bullet-active { @apply !bg-primary-600; }
-.swiper-button-prev,
-.swiper-button-next { @apply !text-primary-600; }

@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { DM_Sans } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], display: 'swap' });
+const dmSans = DM_Sans({ subsets: ['latin'], display: 'swap', variable: '--font-dm-sans' });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
@@ -46,7 +46,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es-AR" suppressHydrationWarning>
-      <body className={`${inter.className} bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased`}>
+      <body className={`${dmSans.variable} font-sans bg-surface dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased`}>
         <Providers>
           {children}
           <Toaster

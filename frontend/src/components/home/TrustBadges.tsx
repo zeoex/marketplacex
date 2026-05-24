@@ -1,45 +1,25 @@
-import { ShieldCheck, MessageCircle, Star, Gift } from 'lucide-react';
+import { ShieldCheck, MessageCircle, Star, Zap } from 'lucide-react';
 
 const BADGES = [
-  {
-    icon: ShieldCheck,
-    title: 'Usuarios Verificados',
-    desc: 'Solo usuarios con identidad validada pueden publicar',
-    color: 'text-green-600',
-  },
-  {
-    icon: MessageCircle,
-    title: 'Contacto Directo',
-    desc: 'Hablá directamente con el vendedor sin intermediarios',
-    color: 'text-blue-600',
-  },
-  {
-    icon: Star,
-    title: 'Sistema de Reputación',
-    desc: 'Calificaciones reales de compradores y vendedores',
-    color: 'text-yellow-500',
-  },
-  {
-    icon: Gift,
-    title: '100% Gratuito',
-    desc: 'Publicar y contactar vendedores es completamente gratis',
-    color: 'text-primary-600',
-  },
+  { icon: ShieldCheck,   title: 'Usuarios verificados',    desc: 'Identidad validada para publicar',       color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30' },
+  { icon: MessageCircle, title: 'Contacto directo',        desc: 'Sin intermediarios ni comisiones',       color: 'bg-blue-50 text-blue-600 dark:bg-blue-900/30' },
+  { icon: Star,          title: 'Sistema de reputación',   desc: 'Calificaciones reales de la comunidad',  color: 'bg-amber-50 text-amber-500 dark:bg-amber-900/30' },
+  { icon: Zap,           title: 'Publicar es gratis',      desc: 'Sin cargo por publicar ni contactar',    color: 'bg-primary-50 text-primary-600 dark:bg-primary-900/30' },
 ];
 
 export function TrustBadges() {
   return (
-    <div className="border-y border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950">
-      <div className="container-app py-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
+      <div className="container-app py-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {BADGES.map(({ icon: Icon, title, desc, color }) => (
-            <div key={title} className="flex items-center gap-3 py-2">
-              <div className={`shrink-0 ${color}`}>
-                <Icon className="w-6 h-6" />
+            <div key={title} className="flex items-center gap-3">
+              <div className={`${color} p-2 rounded-xl shrink-0`}>
+                <Icon className="w-5 h-5" />
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{title}</p>
-                <p className="text-xs text-slate-500 hidden sm:block">{desc}</p>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-800 dark:text-white leading-tight">{title}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-tight mt-0.5 hidden sm:block">{desc}</p>
               </div>
             </div>
           ))}
