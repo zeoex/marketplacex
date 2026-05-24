@@ -11,11 +11,11 @@ export class CategoriesService {
       include: {
         children: {
           where: { isActive: true },
-          orderBy: { order: 'asc' },
+          orderBy: { sortOrder: 'asc' },
         },
         _count: { select: { products: true } },
       },
-      orderBy: { order: 'asc' },
+      orderBy: { sortOrder: 'asc' },
     });
   }
 

@@ -30,9 +30,11 @@ Thumbs.db
 *.pid
 *.seed
 
-# Uploads
-uploads/
-!uploads/.gitkeep
+# Uploads (only root-level uploads folder, not src/uploads module)
+/uploads/
+!/uploads/.gitkeep
+/backend/uploads/
+!/backend/uploads/.gitkeep
 
 # Prisma
 prisma/migrations/

@@ -51,7 +51,7 @@ export class SearchService {
         where,
         include: {
           images: { take: 1 },
-          seller: { select: { id: true, name: true, username: true, avatar: true, rating: true } },
+          seller: { select: { id: true, name: true, username: true, avatarUrl: true, reputationScore: true } },
           category: { select: { id: true, name: true, slug: true } },
         },
         orderBy,

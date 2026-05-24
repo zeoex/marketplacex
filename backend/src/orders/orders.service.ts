@@ -13,7 +13,7 @@ export class OrdersService {
         where: { buyerId: userId },
         include: {
           items: { include: { product: { select: { id: true, title: true, images: { take: 1 } } } } },
-          seller: { select: { id: true, name: true, username: true, avatar: true } },
+          seller: { select: { id: true, name: true, username: true, avatarUrl: true } },
         },
         orderBy: { createdAt: 'desc' },
         skip,
@@ -31,7 +31,7 @@ export class OrdersService {
         items: { include: { product: true } },
         buyer: { select: { id: true, name: true, email: true } },
         seller: { select: { id: true, name: true, email: true } },
-        payment: true,
+        payments: true,
       },
     });
     if (!order) throw new NotFoundException('Order not found');

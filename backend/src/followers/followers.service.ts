@@ -21,14 +21,14 @@ export class FollowersService {
   async getFollowers(userId: string) {
     return this.prisma.follow.findMany({
       where: { followingId: userId },
-      include: { follower: { select: { id: true, name: true, username: true, avatar: true } } },
+      include: { follower: { select: { id: true, name: true, username: true, avatarUrl: true } } },
     });
   }
 
   async getFollowing(userId: string) {
     return this.prisma.follow.findMany({
       where: { followerId: userId },
-      include: { following: { select: { id: true, name: true, username: true, avatar: true } } },
+      include: { following: { select: { id: true, name: true, username: true, avatarUrl: true } } },
     });
   }
 }

@@ -93,4 +93,11 @@ export class MessagesService {
 
     return message;
   }
+
+  async markAsRead(messageId: string, userId: string) {
+    return this.prisma.message.updateMany({
+      where: { id: messageId, receiverId: userId },
+      data: { isRead: true, readAt: new Date() },
+    });
+  }
 }

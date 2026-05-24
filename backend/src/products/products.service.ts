@@ -126,11 +126,13 @@ export class ProductsService {
     if (!product) throw new NotFoundException('Product not found');
     if (product.sellerId !== userId) throw new ForbiddenException();
 
+    const { tags, variants, ...rest } = dto;
     return this.prisma.product.update({
       where: { id },
       data: {
-        ...dto,
-        tags: dto.tags ? { deleteMany: {}, create: dto.tags.map((name) => ({ name })) } : undefined,
+        ...rest,
+        tags: tags ? { deleteMany: {}, create: tags.map((name) => ({ name })) } : undefined,
+        variants: variants ? { deleteMany: {}, create: variants } : undefined,
       },
       include: { images: true, tags: true, variants: true, category: true },
     });
