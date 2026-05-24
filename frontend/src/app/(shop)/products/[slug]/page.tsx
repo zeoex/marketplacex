@@ -7,12 +7,13 @@ import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { api } from '@/lib/api';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const product = await api.products.getOne(params.slug);
+    const { slug } = await params;
+    const product = await api.products.getOne(slug);
     return {
       title: product.title,
       description: product.description?.substring(0, 160),
@@ -33,9 +34,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductPage({ params }: Props) {
+  const { slug } = await params;
   let product;
   try {
-    product = await api.products.getOne(params.slug);
+    product = await api.products.getOne(slug);
   } catch {
     notFound();
   }
