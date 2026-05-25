@@ -107,6 +107,12 @@ enum ReportStatus {
   DISMISSED
 }
 
+enum ConversationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 // ─────────────────────────────────────────────────────────────
 // USER
 // ─────────────────────────────────────────────────────────────
@@ -416,12 +422,14 @@ model WalletTransaction {
 // ─────────────────────────────────────────────────────────────
 
 model Conversation {
-  id           String   @id @default(uuid())
-  productId    String?
-  lastMessage  String?
-  lastMessageAt DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String             @id @default(uuid())
+  productId      String?
+  status         ConversationStatus @default(PENDING)
+  requestMessage String?
+  lastMessage    String?
+  lastMessageAt  DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 
   participants ConversationParticipant[]
   messages     Message[]

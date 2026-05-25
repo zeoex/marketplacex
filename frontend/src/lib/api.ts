@@ -110,10 +110,15 @@ export const api = {
 
   // Messages
   messages: {
+    sendRequest: (data: { sellerId: string; productId: string; requestMessage?: string }) =>
+      axiosInstance.post('/messages/request', data),
+    acceptRequest: (conversationId: string) =>
+      axiosInstance.patch(`/messages/conversations/${conversationId}/accept`),
+    rejectRequest: (conversationId: string) =>
+      axiosInstance.patch(`/messages/conversations/${conversationId}/reject`),
     getConversations: () => axiosInstance.get('/messages/conversations'),
     getConversation: (id: string) => axiosInstance.get(`/messages/conversations/${id}`),
-    startConversation: (productId: string, receiverId: string) =>
-      axiosInstance.post('/messages/conversations', { productId, receiverId }),
+    getMessages: (id: string) => axiosInstance.get(`/messages/conversations/${id}/messages`),
     send: (conversationId: string, data: any) =>
       axiosInstance.post(`/messages/conversations/${conversationId}/messages`, data),
   },

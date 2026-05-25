@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Bell, User, Menu, X, Plus, Moon, Sun,
   ChevronDown, Heart, Package, Settings, LogOut,
-  ShieldCheck, MapPin,
+  ShieldCheck, MapPin, MessageCircle,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
 import { useTheme } from 'next-themes';
@@ -42,11 +42,11 @@ export function Navbar() {
   };
 
   const userMenuItems = [
-    { icon: User,    href: `/profile/${user?.username}`, label: 'Mi Perfil' },
-    { icon: Package, href: '/products/my',               label: 'Mis Publicaciones' },
-    { icon: Heart,   href: '/favorites',                 label: 'Favoritos' },
-    { icon: Bell,    href: '/notifications',             label: 'Notificaciones' },
-    { icon: Settings,href: '/settings',                  label: 'Configuración' },
+    { icon: User,          href: `/profile/${user?.username}`, label: 'Mi Perfil' },
+    { icon: Package,       href: '/products/my',               label: 'Mis Publicaciones' },
+    { icon: MessageCircle, href: '/messages',                  label: 'Mensajes' },
+    { icon: Heart,         href: '/favorites',                 label: 'Favoritos' },
+    { icon: Settings,      href: '/settings',                  label: 'Configuración' },
   ];
 
   return (
