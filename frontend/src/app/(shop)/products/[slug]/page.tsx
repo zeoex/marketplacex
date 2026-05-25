@@ -1,8 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ProductGallery } from '@/components/product/ProductGallery';
-import { ProductInfo } from '@/components/product/ProductInfo';
-import { SellerCard } from '@/components/product/SellerCard';
+import { ProductDetailsClient } from '@/components/product/ProductDetailsClient';
 import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { api } from '@/lib/api';
 
@@ -67,10 +66,7 @@ export default async function ProductPage({ params }: Props) {
         <ProductGallery images={product.images} videos={product.videos} />
 
         {/* Info + Actions */}
-        <div className="space-y-6">
-          <ProductInfo product={product} />
-          <SellerCard seller={product.seller} productId={product.id} />
-        </div>
+        <ProductDetailsClient product={product} />
       </div>
 
       {/* Related */}

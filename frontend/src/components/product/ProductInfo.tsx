@@ -2,8 +2,6 @@
 
 import { MessageCircle, Share2, Flag, Package, MapPin } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import { useAuthStore } from '@/store/auth';
-import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 interface Product {
@@ -27,21 +25,12 @@ const CONDITION_MAP: Record<string, string> = {
   POOR: 'Mal Estado',
 };
 
-interface Props { product: Product }
+interface Props {
+  product: Product;
+  onContact?: () => void;
+}
 
-export function ProductInfo({ product }: Props) {
-  const { user } = useAuthStore();
-  const router = useRouter();
-
-  const handleContact = () => {
-    if (!user) {
-      toast.error('Necesitás registrarte para contactar al vendedor');
-      router.push('/auth/register');
-      return;
-    }
-    router.push(`/messages?product=${product.id}`);
-  };
-
+export function ProductInfo({ product, onContact }: Props) {
   const handleShare = async () => {
     try {
       await navigator.share({ title: product.title, url: window.location.href });
@@ -105,25 +94,14 @@ export function ProductInfo({ product }: Props) {
       </div>
 
       {/* CTA principal — Contactar vendedor */}
-      {!isSold && (
+      {!isSold && onContact && (
         <button
-          onClick={handleContact}
+          onClick={onContact}
           className="w-full btn-primary flex items-center justify-center gap-2 py-4 rounded-xl text-base font-semibold"
         >
           <MessageCircle className="w-5 h-5" />
           Contactar vendedor
         </button>
-      )}
-
-      {/* Aviso si no está registrado */}
-      {!user && (
-        <p className="text-xs text-slate-500 text-center">
-          Necesitás{' '}
-          <a href="/auth/register" className="text-primary-600 hover:underline font-medium">
-            registrarte
-          </a>
-          {' '}e iniciar sesión para poder contactar al vendedor.
-        </p>
       )}
 
       {/* Acciones secundarias */}
