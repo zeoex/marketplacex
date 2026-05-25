@@ -165,6 +165,14 @@ export class MessagesService {
     return message;
   }
 
+  // ── Mark a message as read ────────────────────────────────────────────
+  async markAsRead(messageId: string, userId: string) {
+    await this.prisma.message.updateMany({
+      where: { id: messageId, receiverId: userId },
+      data: { isRead: true, readAt: new Date() },
+    });
+  }
+
   private async assertParticipant(conversationId: string, userId: string) {
     const p = await this.prisma.conversationParticipant.findUnique({
       where: { conversationId_userId: { conversationId, userId } },

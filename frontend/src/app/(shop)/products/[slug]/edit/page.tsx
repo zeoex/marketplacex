@@ -38,7 +38,7 @@ export default function EditProductPage() {
   const { user, hasHydrated } = useRequireAuth();
   const router = useRouter();
   const params = useParams();
-  const id = params.id as string;
+  const id = params.slug as string;
   const fileRef = useRef<HTMLInputElement>(null);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [newPreviews, setNewPreviews] = useState<string[]>([]);
