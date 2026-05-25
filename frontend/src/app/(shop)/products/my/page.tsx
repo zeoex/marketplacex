@@ -44,7 +44,7 @@ export default function MyProductsPage() {
   }, [user, router]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['my-products'],
+    queryKey: ['my-products', user?.id],
     queryFn: () => api.products.myProducts(),
     enabled: !!user,
   });

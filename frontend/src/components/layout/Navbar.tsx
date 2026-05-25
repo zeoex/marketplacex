@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Search, Bell, User, Menu, X, Plus, Moon, Sun,
   ChevronDown, Heart, Package, Settings, LogOut,
@@ -16,6 +17,7 @@ export function Navbar() {
   const { user, logout } = useAuthStore();
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [query, setQuery]           = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
@@ -179,7 +181,7 @@ export function Navbar() {
 
                       <div className="border-t border-slate-100 dark:border-slate-700 py-1">
                         <button
-                          onClick={() => { logout(); setIsUserOpen(false); }}
+                          onClick={() => { queryClient.clear(); logout(); setIsUserOpen(false); }}
                           className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                         >
                           <LogOut className="w-4 h-4" />

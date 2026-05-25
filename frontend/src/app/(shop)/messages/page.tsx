@@ -144,7 +144,7 @@ export default function MessagesPage() {
   }, [user, router]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['conversations'],
+    queryKey: ['conversations', user?.id],
     queryFn: () => api.messages.getConversations(),
     enabled: !!user,
     refetchInterval: 10000,
