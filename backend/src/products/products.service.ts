@@ -151,12 +151,36 @@ export class ProductsService {
     return { data, meta: { total, page, limit, pages: Math.ceil(total / limit) } };
   }
 
-  async update(id: string, userId: string, dto: UpdateProductDto) {
-    const product = await this.prisma.product.findUnique({ where: { id } });
+  async update(id: string, userId: string, dto: UpdateProductDto, files: Express.Multer.File[] = []) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      include: { images: true },
+    });
     if (!product) throw new NotFoundException('Product not found');
     if (product.sellerId !== userId) throw new ForbiddenException();
 
-    const { tags, ...rest } = dto;
+    const { tags, keepImageIds, ...rest } = dto;
+
+    if (keepImageIds !== undefined) {
+      const toDelete = product.images
+        .filter((img) => !keepImageIds.includes(img.id))
+        .map((img) => img.id);
+      if (toDelete.length > 0) {
+        await this.prisma.productImage.deleteMany({ where: { id: { in: toDelete } } });
+      }
+    }
+
+    if (files.length > 0) {
+      const currentCount = keepImageIds !== undefined ? keepImageIds.length : product.images.length;
+      await this.prisma.productImage.createMany({
+        data: files.map((f, i) => ({
+          productId: id,
+          url: `data:${f.mimetype};base64,${f.buffer.toString('base64')}`,
+          sortOrder: currentCount + i,
+        })),
+      });
+    }
+
     return this.prisma.product.update({
       where: { id },
       data: {

@@ -80,7 +80,8 @@ export const api = {
     getOne: (slug: string) => axiosInstance.get(`/products/${slug}`),
     create: (data: FormData) =>
       axiosInstance.post('/products', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    update: (id: string, data: any) => axiosInstance.patch(`/products/${id}`, data),
+    update: (id: string, data: FormData) =>
+      axiosInstance.patch(`/products/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     delete: (id: string) => axiosInstance.delete(`/products/${id}`),
     getFeatured: () => axiosInstance.get('/products/featured'),
     getRelated: (id: string) => axiosInstance.get(`/products/${id}/related`),

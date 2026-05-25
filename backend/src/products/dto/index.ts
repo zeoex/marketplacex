@@ -1,5 +1,5 @@
 import { IsString, IsNumber, IsOptional, IsEnum, IsArray, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ProductCondition, DeliveryType } from '@prisma/client';
 
@@ -88,6 +88,16 @@ export class UpdateProductDto {
   @ApiPropertyOptional() @IsOptional() @IsString() location?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional({ type: [String] }) @IsOptional() tags?: string[];
+
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    try { return JSON.parse(value); } catch { return undefined; }
+  })
+  @IsArray()
+  @IsString({ each: true })
+  keepImageIds?: string[];
 }
 
 export class QueryProductsDto {

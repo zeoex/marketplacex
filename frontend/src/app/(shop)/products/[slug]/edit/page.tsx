@@ -24,7 +24,7 @@ const schema = z.object({
   location: z.string().min(2, 'Ingresá la ubicación'),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormValues = z.infer<typeof schema>;
 
 const CONDITIONS = [
   { value: 'NEW', label: 'Nuevo' },
@@ -59,7 +59,7 @@ export default function EditProductPage() {
 
   const product = (productData as any)?.data ?? (productData as any);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
 
@@ -79,17 +79,18 @@ export default function EditProductPage() {
   }, [product, reset]);
 
   const mutation = useMutation({
-    mutationFn: async (formData: FormData) => {
+    mutationFn: async (values: FormValues) => {
       const fd = new FormData();
-      Object.entries(formData).forEach(([k, v]) => fd.append(k, v));
+      fd.append('title', values.title);
+      fd.append('description', values.description);
+      fd.append('price', values.price);
+      fd.append('currency', values.currency);
+      fd.append('condition', values.condition);
+      fd.append('categoryId', values.categoryId);
+      fd.append('location', values.location);
+      fd.append('keepImageIds', JSON.stringify(keepImages.map((img) => img.id)));
       newFiles.forEach((f) => fd.append('images', f));
-      return api.products.update(id, {
-        title: formData.title,
-        description: formData.description,
-        price: Number(formData.price),
-        condition: formData.condition,
-        location: formData.location,
-      });
+      return api.products.update(id, fd);
     },
     onSuccess: () => {
       toast.success('¡Publicación actualizada!');
@@ -148,7 +149,7 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-6">
+        <form onSubmit={handleSubmit((values) => mutation.mutate(values))} className="space-y-6">
           {/* Fotos */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
             <h2 className="font-semibold mb-4">Fotos <span className="text-slate-400 text-sm font-normal">(hasta 8)</span></h2>

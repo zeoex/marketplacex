@@ -58,8 +58,14 @@ export class ProductsController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() dto: UpdateProductDto, @Request() req: any) {
-    return this.productsService.update(id, req.user.id, dto);
+  @UseInterceptors(FilesInterceptor('images', 10, { storage: memoryStorage() }))
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateProductDto,
+    @Request() req: any,
+    @UploadedFiles() files: Express.Multer.File[] = [],
+  ) {
+    return this.productsService.update(id, req.user.id, dto, files);
   }
 
   @Delete(':id')
