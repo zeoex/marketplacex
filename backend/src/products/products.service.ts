@@ -139,6 +139,7 @@ export class ProductsService {
         include: {
           images: { take: 1, orderBy: { sortOrder: 'asc' } },
           category: true,
+          seller: { select: { id: true, name: true, username: true, avatarUrl: true, reputationScore: true } },
           _count: { select: { favorites: true } },
         },
         orderBy: { [sortBy]: order },

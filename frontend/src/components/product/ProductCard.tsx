@@ -126,12 +126,12 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           {/* Seller */}
           <div className="flex items-center gap-2 mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700">
             <div className="w-5 h-5 rounded-full bg-primary-600 flex items-center justify-center text-white text-2xs font-bold overflow-hidden shrink-0">
-              {product.seller.avatarUrl
+              {product.seller?.avatarUrl
                 ? <img src={product.seller.avatarUrl} alt="" className="w-full h-full object-cover" />
-                : product.seller.name[0]?.toUpperCase()
+                : product.seller?.name?.[0]?.toUpperCase() ?? '?'
               }
             </div>
-            <span className="text-2xs text-slate-500 dark:text-slate-400 truncate flex-1">{product.seller.name}</span>
+            <span className="text-2xs text-slate-500 dark:text-slate-400 truncate flex-1">{product.seller?.name ?? ''}</span>
             {product._count?.favorites ? (
               <span className="flex items-center gap-0.5 text-2xs text-slate-400">
                 <Heart className="w-2.5 h-2.5" />
