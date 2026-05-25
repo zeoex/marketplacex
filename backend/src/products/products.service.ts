@@ -29,6 +29,14 @@ export class ProductsService {
         categoryId: dto.categoryId,
         tags: dto.tags ? { create: dto.tags.map((name) => ({ name })) } : undefined,
         variants: dto.variants ? { create: dto.variants } : undefined,
+        images: files.length
+          ? {
+              create: files.map((f, i) => ({
+                url: `data:${f.mimetype};base64,${f.buffer.toString('base64')}`,
+                sortOrder: i,
+              })),
+            }
+          : undefined,
       },
       include: {
         images: true,
@@ -49,9 +57,11 @@ export class ProductsService {
 
     const where: any = { status: 'ACTIVE' };
     if (categoryId) where.categoryId = categoryId;
-    if (minPrice !== undefined || maxPrice !== undefined) where.price = {};
-    if (minPrice !== undefined) where.price.gte = minPrice;
-    if (maxPrice !== undefined) where.price.lte = maxPrice;
+    const minNum = minPrice !== undefined && minPrice !== ('' as any) ? Number(minPrice) : NaN;
+    const maxNum = maxPrice !== undefined && maxPrice !== ('' as any) ? Number(maxPrice) : NaN;
+    if (!isNaN(minNum) || !isNaN(maxNum)) where.price = {};
+    if (!isNaN(minNum)) where.price.gte = minNum;
+    if (!isNaN(maxNum)) where.price.lte = maxNum;
     if (condition) where.condition = condition;
     if (delivery) where.delivery = delivery;
     if (location) where.location = { contains: location, mode: 'insensitive' };

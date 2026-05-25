@@ -36,9 +36,13 @@ export function ProductsContent() {
     limit: 24,
   });
 
+  const cleanedFilters = Object.fromEntries(
+    Object.entries(filters).filter(([, v]) => v !== '' && v !== null && v !== undefined)
+  );
+
   const { data, isLoading } = useQuery({
     queryKey: ['products', filters],
-    queryFn: () => api.products.getAll(filters),
+    queryFn: () => api.products.getAll(cleanedFilters),
     placeholderData: (prev) => prev,
   });
 
