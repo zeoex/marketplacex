@@ -82,11 +82,13 @@ export class UpdateProductDto {
   @ApiPropertyOptional() @IsOptional() @IsString() title?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) price?: number;
+  @ApiPropertyOptional() @IsOptional() @IsString() currency?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) stock?: number;
   @ApiPropertyOptional() @IsOptional() @IsEnum(ProductCondition) condition?: ProductCondition;
   @ApiPropertyOptional() @IsOptional() @IsEnum(DeliveryType) delivery?: DeliveryType;
   @ApiPropertyOptional() @IsOptional() @IsString() location?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() categoryId?: string;
   @ApiPropertyOptional({ type: [String] }) @IsOptional() tags?: string[];
 
   @ApiPropertyOptional({ type: [String] })

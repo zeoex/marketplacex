@@ -159,7 +159,7 @@ export class ProductsService {
     if (!product) throw new NotFoundException('Product not found');
     if (product.sellerId !== userId) throw new ForbiddenException();
 
-    const { tags, keepImageIds, ...rest } = dto;
+    const { tags, keepImageIds, categoryId, ...rest } = dto;
 
     if (keepImageIds !== undefined) {
       const toDelete = product.images
@@ -187,11 +187,13 @@ export class ProductsService {
         title: rest.title,
         description: rest.description,
         price: rest.price,
+        currency: rest.currency,
         stock: rest.stock,
         condition: rest.condition,
         delivery: rest.delivery,
         location: rest.location,
         status: rest.status as any,
+        categoryId: categoryId,
         tags: tags ? { deleteMany: {}, create: tags.map((name) => ({ name })) } : undefined,
       },
       include: { images: true, tags: true, variants: true, category: true },
