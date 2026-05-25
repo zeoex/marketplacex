@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Upload, X, Plus } from 'lucide-react';
-import { useAuthStore } from '@/store/auth';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -35,18 +35,11 @@ const CONDITIONS = [
 ];
 
 export default function NewProductPage() {
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useRequireAuth();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
-
-  useEffect(() => {
-    if (!user) {
-      toast.error('Necesitás iniciar sesión para publicar');
-      router.push('/auth/login');
-    }
-  }, [user, router]);
 
   const { data: catData } = useQuery({
     queryKey: ['categories'],
@@ -94,6 +87,11 @@ export default function NewProductPage() {
     setPreviews((prev) => prev.filter((_, idx) => idx !== i));
   };
 
+  if (!hasHydrated) return (
+    <div className="container-app py-16 flex justify-center">
+      <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
   if (!user) return null;
 
   return (

@@ -2,22 +2,15 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Heart } from 'lucide-react';
-import { useAuthStore } from '@/store/auth';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { api } from '@/lib/api';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ProductCardSkeleton } from '@/components/product/ProductCardSkeleton';
 
 export default function FavoritesPage() {
-  const { user } = useAuthStore();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!user) router.push('/auth/login');
-  }, [user, router]);
+  const { user, hasHydrated } = useRequireAuth();
 
   const { data, isLoading } = useQuery({
     queryKey: ['favorites'],
@@ -27,6 +20,11 @@ export default function FavoritesPage() {
 
   const favorites = (data as any)?.data || [];
 
+  if (!hasHydrated) return (
+    <div className="container-app py-16 flex justify-center">
+      <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
   if (!user) return null;
 
   return (

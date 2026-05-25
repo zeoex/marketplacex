@@ -2,11 +2,11 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MessageCircle, Check, X, Send, Phone, Mail, Clock, ChevronLeft } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { api } from '@/lib/api';
 import { timeAgo } from '@/lib/utils';
 import toast from 'react-hot-toast';
@@ -134,14 +134,9 @@ function ChatView({ conv, meId, onBack }: { conv: Conversation; meId: string; on
 }
 
 export default function MessagesPage() {
-  const { user } = useAuthStore();
-  const router = useRouter();
+  const { user, hasHydrated } = useRequireAuth();
   const qc = useQueryClient();
   const [selected, setSelected] = useState<Conversation | null>(null);
-
-  useEffect(() => {
-    if (!user) { router.push('/auth/login'); }
-  }, [user, router]);
 
   const { data, isLoading } = useQuery({
     queryKey: ['conversations', user?.id],
@@ -175,6 +170,11 @@ export default function MessagesPage() {
     onError: () => toast.error('Error al rechazar'),
   });
 
+  if (!hasHydrated) return (
+    <div className="container-app py-16 flex justify-center">
+      <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
   if (!user) return null;
   const meId = user.id;
   const getOther = (conv: Conversation) => conv.participants.find((p) => p.userId !== meId)?.user;

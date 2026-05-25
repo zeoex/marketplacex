@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Upload, X, Pencil } from 'lucide-react';
-import { useAuthStore } from '@/store/auth';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -35,7 +35,7 @@ const CONDITIONS = [
 ];
 
 export default function EditProductPage() {
-  const { user } = useAuthStore();
+  const { user, hasHydrated } = useRequireAuth();
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -43,13 +43,6 @@ export default function EditProductPage() {
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [newPreviews, setNewPreviews] = useState<string[]>([]);
   const [keepImages, setKeepImages] = useState<{ url: string; id: string }[]>([]);
-
-  useEffect(() => {
-    if (!user) {
-      toast.error('Necesitás iniciar sesión');
-      router.push('/auth/login');
-    }
-  }, [user, router]);
 
   const { data: catData } = useQuery({
     queryKey: ['categories'],
@@ -126,7 +119,7 @@ export default function EditProductPage() {
     setNewPreviews((prev) => prev.filter((_, idx) => idx !== i));
   };
 
-  if (!user || isLoading) return (
+  if (!hasHydrated || isLoading) return (
     <div className="container-app py-8 max-w-2xl mx-auto">
       <div className="animate-pulse space-y-4">
         {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-14 bg-slate-100 rounded-2xl" />)}

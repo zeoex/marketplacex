@@ -2,13 +2,12 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Package, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAuthStore } from '@/store/auth';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { api } from '@/lib/api';
 import { ProductCardSkeleton } from '@/components/product/ProductCardSkeleton';
 import { formatCurrency } from '@/lib/utils';
@@ -34,14 +33,9 @@ function ConfirmDialog({ title, onConfirm, onCancel }: { title: string; onConfir
 }
 
 export default function MyProductsPage() {
-  const { user } = useAuthStore();
-  const router = useRouter();
+  const { user, hasHydrated } = useRequireAuth();
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; title: string } | null>(null);
-
-  useEffect(() => {
-    if (!user) router.push('/auth/login');
-  }, [user, router]);
 
   const { data, isLoading } = useQuery({
     queryKey: ['my-products', user?.id],
@@ -64,6 +58,11 @@ export default function MyProductsPage() {
 
   const products = (data as any)?.data?.data ?? (data as any)?.data ?? [];
 
+  if (!hasHydrated) return (
+    <div className="container-app py-16 flex justify-center">
+      <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
   if (!user) return null;
 
   return (

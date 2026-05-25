@@ -2,14 +2,13 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { Settings, User } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { api } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -23,12 +22,8 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function SettingsPage() {
-  const { user, setAuth } = useAuthStore();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!user) router.push('/auth/login');
-  }, [user, router]);
+  const { user, hasHydrated } = useRequireAuth();
+  const { setAuth } = useAuthStore();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -51,6 +46,11 @@ export default function SettingsPage() {
     onError: () => toast.error('Error al actualizar el perfil'),
   });
 
+  if (!hasHydrated) return (
+    <div className="container-app py-16 flex justify-center">
+      <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
   if (!user) return null;
 
   return (

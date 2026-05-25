@@ -18,11 +18,13 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   isLoading: boolean;
+  hasHydrated: boolean;
 
   setAuth: (user: AuthUser, accessToken: string, refreshToken: string) => void;
   setUser: (user: AuthUser) => void;
   logout: () => void;
   setLoading: (v: boolean) => void;
+  setHasHydrated: (v: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -33,9 +35,10 @@ export const useAuthStore = create<AuthState>()(
         accessToken: null,
         refreshToken: null,
         isLoading: false,
+        hasHydrated: false,
 
         setAuth: (user, accessToken, refreshToken) => {
-          Cookies.set('access_token', accessToken, { expires: 1 / 96, secure: true, sameSite: 'Strict' }); // 15 min
+          Cookies.set('access_token', accessToken, { expires: 1 / 96, secure: true, sameSite: 'Strict' });
           Cookies.set('refresh_token', refreshToken, { expires: 7, secure: true, sameSite: 'Strict' });
           set({ user, accessToken, refreshToken });
         },
@@ -49,8 +52,15 @@ export const useAuthStore = create<AuthState>()(
         },
 
         setLoading: (v) => set({ isLoading: v }),
+        setHasHydrated: (v) => set({ hasHydrated: v }),
       }),
-      { name: 'mpx-auth', partialize: (state) => ({ user: state.user, refreshToken: state.refreshToken }) },
+      {
+        name: 'mpx-auth',
+        partialize: (state) => ({ user: state.user, refreshToken: state.refreshToken }),
+        onRehydrateStorage: () => (state) => {
+          state?.setHasHydrated(true);
+        },
+      },
     ),
   ),
 );
